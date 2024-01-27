@@ -1,5 +1,7 @@
 package com.openclassroom.SafetyNet.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
 
 public class Datas {
@@ -32,4 +34,5 @@ public class Datas {
     public void setMedicalrecords(List<MedicalRecord> medicalrecords) {
         this.medicalrecords = medicalrecords;
     }
+
 }
