@@ -8,7 +8,7 @@ import java.io.IOException;
 public interface FireStationRepository {
 
     FireStations getfireStationList() throws IOException;
-    void saveFirestation(FireStation fireStation) ;
+    String saveFirestation(FireStations fireStation) throws Exception;
     void updateFirestation(FireStation fireStation);
     void deleteFirestation(String stationNumber);
 }

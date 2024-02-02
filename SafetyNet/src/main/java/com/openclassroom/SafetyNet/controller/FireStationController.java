@@ -1,29 +1,28 @@
 package com.openclassroom.SafetyNet.controller;
 
-import com.openclassroom.SafetyNet.model.FireStations;
-import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
+import com.openclassroom.SafetyNet.model.FireStation;
+import com.openclassroom.SafetyNet.service.FireStationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/firestation")
 public class FireStationController {
 
     private final Logger LOGGER = LogManager.getLogger();
 
     @Autowired
-    private FireStationRepository fireStationRepository;
+    private FireStationService fireStationService;
 
-    @GetMapping(value = "/firestation", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FireStations getFireStations() throws Exception {
-        try {
-            return fireStationRepository.getfireStationList();
-        } catch (final Exception e) {
-            LOGGER.atWarn().log("Error reading JSON file", e);
-            throw new Exception("Can't read JSON file", e);
-        }
+    @PostMapping
+    public String addFireStation(@RequestBody FireStation fireStation) throws Exception {
+        String fireStationNumber = fireStationService.addFireStation(fireStation);
+        return "The fireStation number "+fireStationNumber+" has been successfully saved";
     }
+
 }
