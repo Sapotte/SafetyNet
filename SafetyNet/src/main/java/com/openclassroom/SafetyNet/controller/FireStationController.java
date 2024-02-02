@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FireStationController {
 
-    private Logger logger = LogManager.getLogger();
+    private final Logger LOGGER = LogManager.getLogger();
+
     @Autowired
     private FireStationRepository fireStationRepository;
 
@@ -21,7 +22,7 @@ public class FireStationController {
         try {
             return fireStationRepository.getfireStationList();
         } catch (final Exception e) {
-            logger.atWarn().log("Error reading JSON file", e);
+            LOGGER.atWarn().log("Error reading JSON file", e);
             throw new Exception("Can't read JSON file", e);
         }
     }
