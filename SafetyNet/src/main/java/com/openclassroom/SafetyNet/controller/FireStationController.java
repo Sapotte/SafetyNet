@@ -18,9 +18,9 @@ public class FireStationController {
     private FireStationService fireStationService;
 
     @PostMapping
-    public String addFireStation(@RequestParam String address, @RequestParam String station) throws Exception {
+    public void addFireStation(@RequestParam String address, @RequestParam String station) throws Exception {
         String fireStationNumber = fireStationService.addFireStation(address, station);
-        return "The fireStation number "+fireStationNumber+" has been successfully saved";
+        System.out.println(MessageFormat.format("The fireStation number \"{0}\" has been successfully saved", fireStationNumber));
     }
 
     @DeleteMapping
