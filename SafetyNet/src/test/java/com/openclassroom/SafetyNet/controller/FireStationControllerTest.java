@@ -15,7 +15,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class FirsStationControllerTest {
+class FireStationControllerTest {
     @InjectMocks
     private static FireStationController fireStationController;
     @Mock

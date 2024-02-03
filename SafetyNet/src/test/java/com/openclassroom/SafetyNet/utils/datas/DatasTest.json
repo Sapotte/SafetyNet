@@ -1,0 +1,81 @@
+{
+  "firestations":[
+    {
+      "address":"1 Abc St",
+      "station":"1"
+    },
+    {
+      "address":"2 Def St",
+      "station":"2"
+    },
+    {
+      "address":"3 Ghi St",
+      "station":"3"
+    }
+  ],
+  "persons":[
+    {
+      "address":"947 E. Rose Dr",
+      "city":"Culver",
+      "email":"bstel@email.com",
+      "firstName":"Kendrik",
+      "lastName":"Stelzer",
+      "phone":"841-874-7784",
+      "zip":"97451"
+    },
+    {
+      "address":"748 Townings Dr",
+      "city":"Culver",
+      "email":"clivfd@ymail.com",
+      "firstName":"Clive",
+      "lastName":"Ferguson",
+      "phone":"841-874-6741",
+      "zip":"97451"
+    },
+    {
+      "address":"951 LoneTree Rd",
+      "city":"Culver",
+      "email":"gramps@email.com",
+      "firstName":"Eric",
+      "lastName":"Cadigan",
+      "phone":"841-874-7458",
+      "zip":"97451"
+    }
+  ],
+  "medicalrecords":[
+    {
+      "allergies":[
+
+      ],
+      "birthdate":"03/06/2014",
+      "firstName":"Kendrik",
+      "lastName":"Stelzer",
+      "medications":[
+        "noxidian:100mg",
+        "pharmacol:2500mg"
+      ]
+    },
+    {
+      "allergies":[
+
+      ],
+      "birthdate":"03/06/1994",
+      "firstName":"Clive",
+      "lastName":"Ferguson",
+      "medications":[
+
+      ]
+    },
+    {
+      "allergies":[
+
+      ],
+      "birthdate":"08/06/1945",
+      "firstName":"Eric",
+      "lastName":"Cadigan",
+      "medications":[
+        "tradoxidine:400mg"
+      ]
+    }
+  ]
+}

@@ -20,20 +20,17 @@ public class FireStationService {
     @Autowired
     Datas datas;
 
-    public String addFireStation(String address, String station) throws Exception {
+    public String addFireStation(String address, String station) {
         FireStation newFirestation = new FireStation();
         newFirestation.setAddress(address);
         newFirestation.setStation(station);
-        try {
-            return fireStationRepository.saveFirestation(newFirestation);
-        } catch (Exception e) {
-            throw new Exception("An error occured during fireStation's saving");
-        }
+        return fireStationRepository.saveFirestation(newFirestation);
     }
 
     public void deleteFirestationByAddress(String address) throws ClassNotFoundException{
-        Integer index = IntStream.range(0, datas.getFireStations().size()).filter(i -> datas.getFireStations().get(i).getAddress().equals(address)).findFirst().getAsInt();
-        if (index != null) {
+        var optionalIndex = IntStream.range(0, datas.getFireStations().size()).filter(i -> datas.getFireStations().get(i).getAddress().equals(address)).findFirst();
+        if (optionalIndex.isPresent()) {
+            int index = optionalIndex.getAsInt();
             fireStationRepository.deleteFirestation(index);
         } else {
             throw new ClassNotFoundException(MessageFormat.format("There is no station for the address \" {0} \"", address));

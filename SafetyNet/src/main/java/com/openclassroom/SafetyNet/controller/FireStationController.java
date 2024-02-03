@@ -18,20 +18,15 @@ public class FireStationController {
     private FireStationService fireStationService;
 
     @PostMapping
-    public void addFireStation(@RequestParam String address, @RequestParam String station) throws Exception {
+    public void addFireStation(@RequestParam String address, @RequestParam String station) {
         String fireStationNumber = fireStationService.addFireStation(address, station);
         System.out.println(MessageFormat.format("The fireStation number \"{0}\" has been successfully saved", fireStationNumber));
     }
 
     @DeleteMapping
     public void deleteFireStation(@RequestParam String address) throws Exception {
-        try {
-            fireStationService.deleteFirestationByAddress(address);
-            System.out.println(MessageFormat.format("The station with the address \"{0}\" has been successfully deleted", address));
-        } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage());
-        }
-
+        fireStationService.deleteFirestationByAddress(address);
+        System.out.println(MessageFormat.format("The station with the address \"{0}\" has been successfully deleted", address));
     }
 
 }
