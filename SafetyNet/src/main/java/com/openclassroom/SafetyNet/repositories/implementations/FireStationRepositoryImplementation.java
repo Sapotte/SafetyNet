@@ -1,45 +1,38 @@
 package com.openclassroom.SafetyNet.repositories.implementations;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.FireStation;
 import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.File;
-import java.util.List;
+import java.text.MessageFormat;
 
 @Repository
 public class FireStationRepositoryImplementation implements FireStationRepository {
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-    private final File fireStationsDatas = new File("src/main/resources/datas/FireStations.json");
+    private static final Logger LOGGER = LogManager.getLogger(FireStationRepository.class);
 
-
+    @Autowired
+    private Datas datas;
 
 
     @Override
-    public String saveFirestation(List<FireStation> fireStations) throws Exception {
-        try {
-            writer.writeValue(fireStationsDatas, fireStations);
-            return fireStations.get(fireStations.size()-1).getStation();
-        } catch (final Exception e) {
-            LOGGER.atWarn().log(e.getMessage());
-            throw new Exception("Error saving data: "+e.getMessage());
-        }
+    public String saveFirestation(FireStation fireStation) {
+        LOGGER.info(MessageFormat.format("Add station {0} located at {1} to the firestations list", fireStation.getStation(), fireStation.getAddress()));
+        datas.getFireStations().add(fireStation);
+        return fireStation.getStation();
     }
 
     @Override
-    public void updateFirestation(FireStation fireStation) {
+    public void updateFirestation(int index, String newStation) {
 
     }
 
     @Override
-    public void deleteFirestation(String stationNumber) {
-
+    public void deleteFirestation(int index) {
+        LOGGER.info("Station deleted");
+        datas.getFireStations().remove(index);
     }
 }
