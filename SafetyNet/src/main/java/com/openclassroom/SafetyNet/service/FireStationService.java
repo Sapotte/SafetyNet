@@ -16,7 +16,6 @@ public class FireStationService {
     private static final Logger logger = LogManager.getLogger(FireStationService.class);
     @Autowired
     FireStationRepository fireStationRepository;
-
     @Autowired
     Datas datas;
 

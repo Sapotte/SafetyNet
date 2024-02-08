@@ -1,0 +1,9 @@
+{
+  "address":"987 av Test",
+  "city":"Test",
+  "email":"mail@mail.com",
+  "firstName":"Newfirstname",
+  "lastName":"Newlastname",
+  "phone":"123-456-7891",
+  "zip":"12345"
+}

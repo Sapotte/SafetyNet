@@ -44,6 +44,9 @@
   }, {
     "address" : "2 de l'avenir",
     "station" : "2"
+  }, {
+    "address" : "adresse",
+    "station" : "23"
   } ],
   "persons" : [ {
     "address" : "1509 Culver St",
@@ -229,6 +232,22 @@
     "lastName" : "Cadigan",
     "phone" : "841-874-7458",
     "zip" : "97451"
+  }, {
+    "address" : null,
+    "city" : null,
+    "email" : null,
+    "firstName" : null,
+    "lastName" : null,
+    "phone" : null,
+    "zip" : null
+  }, {
+    "address" : "string",
+    "city" : "string",
+    "email" : "string",
+    "firstName" : "string",
+    "lastName" : "string",
+    "phone" : "string",
+    "zip" : "string"
   } ],
   "medicalrecords" : [ {
     "allergies" : [ "nillacilan" ],
