@@ -20,13 +20,19 @@ public class FireStationController {
     @PostMapping
     public void addFireStation(@RequestParam String address, @RequestParam String station) {
         String fireStationNumber = fireStationService.addFireStation(address, station);
-        System.out.println(MessageFormat.format("The fireStation number \"{0}\" has been successfully saved", fireStationNumber));
+        logger.info(MessageFormat.format("The fireStation number \"{0}\" has been successfully saved", fireStationNumber));
+    }
+
+    @PutMapping
+    public void updateFireStationNumber(@RequestParam String address, @RequestParam String station) {
+            fireStationService.updateFireStation(address, station);
+            logger.info(MessageFormat.format("The fireStation at the address \"{0}\" has been successfully updated", address));
     }
 
     @DeleteMapping
     public void deleteFireStation(@RequestParam String address) throws Exception {
         fireStationService.deleteFirestationByAddress(address);
-        System.out.println(MessageFormat.format("The station with the address \"{0}\" has been successfully deleted", address));
+        logger.info(MessageFormat.format("The station with the address \"{0}\" has been successfully deleted", address));
     }
 
 }

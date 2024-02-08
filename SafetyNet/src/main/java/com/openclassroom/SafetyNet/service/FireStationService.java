@@ -24,15 +24,30 @@ public class FireStationService {
         FireStation newFirestation = new FireStation();
         newFirestation.setAddress(address);
         newFirestation.setStation(station);
+        logger.debug("New object FireStation created");
         return fireStationRepository.saveFirestation(newFirestation);
     }
 
-    public void deleteFirestationByAddress(String address) throws ClassNotFoundException{
+    public void updateFireStation(String address, String station) {
+        var firstationToUpdate = IntStream.range(0, datas.getFireStations().size()).filter(i -> datas.getFireStations().get(i).getAddress().equals(address)).findFirst();
+        if (firstationToUpdate.isPresent()) {
+            logger.debug(MessageFormat.format("Firestation at {0} to be updated", firstationToUpdate.getAsInt()));
+            fireStationRepository.updateFirestation(firstationToUpdate.getAsInt(), station);
+        } else {
+            logger.error("No station found");
+            throw new NullPointerException(MessageFormat.format("No station found at the address {0}", address));
+        }
+    }
+
+    public void deleteFirestationByAddress(String address) throws ClassNotFoundException {
         var optionalIndex = IntStream.range(0, datas.getFireStations().size()).filter(i -> datas.getFireStations().get(i).getAddress().equals(address)).findFirst();
+
         if (optionalIndex.isPresent()) {
             int index = optionalIndex.getAsInt();
+            logger.debug(MessageFormat.format("Firestation at index {0} to be deleted", optionalIndex));
             fireStationRepository.deleteFirestation(index);
         } else {
+            logger.error("No firestation found at this address");
             throw new ClassNotFoundException(MessageFormat.format("There is no station for the address \" {0} \"", address));
         }
     }

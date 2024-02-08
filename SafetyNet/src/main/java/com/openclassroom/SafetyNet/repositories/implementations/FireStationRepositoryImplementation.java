@@ -12,27 +12,28 @@ import java.text.MessageFormat;
 
 @Repository
 public class FireStationRepositoryImplementation implements FireStationRepository {
-    private static final Logger LOGGER = LogManager.getLogger(FireStationRepository.class);
+    private static final Logger logger = LogManager.getLogger(FireStationRepository.class);
 
     @Autowired
-    private Datas datas;
+    public Datas datas;
 
 
     @Override
     public String saveFirestation(FireStation fireStation) {
-        LOGGER.info(MessageFormat.format("Add station {0} located at {1} to the firestations list", fireStation.getStation(), fireStation.getAddress()));
+        logger.debug(MessageFormat.format("Add station {0} located at {1} to the firestations' list", fireStation.getStation(), fireStation.getAddress()));
         datas.getFireStations().add(fireStation);
         return fireStation.getStation();
     }
 
     @Override
     public void updateFirestation(int index, String newStation) {
-
+        logger.debug(MessageFormat.format("Update station'number to {0}", newStation));
+        datas.getFireStations().get(index).setStation(newStation);
     }
 
     @Override
     public void deleteFirestation(int index) {
-        LOGGER.info("Station deleted");
+        logger.debug("Delete station");
         datas.getFireStations().remove(index);
     }
 }

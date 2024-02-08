@@ -21,12 +21,19 @@ class FireStationControllerTest {
     @Mock
     private static FireStationService fireStationService;
     @Test
-    void saveFirestationOk() throws Exception {
+    void saveFirestationOk() {
         Mockito.when(fireStationService.addFireStation(anyString(), anyString())).thenReturn(FIRESTATION_ID);
 
         fireStationController.addFireStation(FIRESTATION_ADDRESS, FIRESTATION_ID);
 
         verify(fireStationService, times(1)).addFireStation(FIRESTATION_ADDRESS, FIRESTATION_ID);
+    }
+
+    @Test
+    void updateFirestationOk() {
+        fireStationController.updateFireStationNumber(FIRESTATION_ADDRESS, FIRESTATION_ID);
+
+        verify(fireStationService, times(1)).updateFireStation(FIRESTATION_ADDRESS, FIRESTATION_ID);
     }
 
     @Test
