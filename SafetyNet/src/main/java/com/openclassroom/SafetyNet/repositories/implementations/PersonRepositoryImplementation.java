@@ -24,6 +24,7 @@ public class PersonRepositoryImplementation implements PersonRepository {
         if(datas.getPersons().contains(person)) {
             logger.info(MessageFormat.format("{0} {1} has been added to the list of persons", person.getFirstName(), person.getLastName()));
         } else {
+            logger.error("New person not saved");
             throw new ErrorResponseException(HttpStatusCode.valueOf(417), new Throwable("Error adding the person's infos to the list"));
         }
     }

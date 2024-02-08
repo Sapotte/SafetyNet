@@ -25,8 +25,10 @@ public class PersonService {
         patternHelper.checkisValidPerson(newPerson);
         // Check if the person is not already in the list
         if (datas.getPersons().stream().anyMatch(person -> person.getFirstName().equals(newPerson.getFirstName()) && person.getLastName().equals(newPerson.getLastName()))) {
+            logger.error("Person already in the list");
             throw new InvalidAttributeValueException(MessageFormat.format("{0} {1} is already in the list", newPerson.getFirstName(), newPerson.getLastName()));
         }
+        logger.debug("Save person");
         personRepository.savePerson(newPerson);
     }
 }
