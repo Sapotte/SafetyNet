@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.MessageFormat;
 
 @RestController
-@RequestMapping("/firestation")
+@RequestMapping("/x")
 public class FireStationController {
 
     private final Logger logger = LogManager.getLogger();
@@ -18,6 +18,7 @@ public class FireStationController {
     private FireStationService fireStationService;
 
     @PostMapping
+
     public void addFireStation(@RequestParam String address, @RequestParam String station) {
         String fireStationNumber = fireStationService.addFireStation(address, station);
         logger.info(MessageFormat.format("The fireStation number \"{0}\" has been successfully saved", fireStationNumber));

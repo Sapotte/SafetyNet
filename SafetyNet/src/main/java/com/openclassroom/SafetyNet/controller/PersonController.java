@@ -27,7 +27,7 @@ public class PersonController {
     }
 
     @PutMapping
-    @Operation(summary = "Update person's infos")
+    @Operation(summary = "Update person's infos by first and last names")
     public void updatePerson(@RequestParam Person person) throws InvalidAttributeValueException {
         personService.updatePerson(person);
         logger.debug("Person updated");
@@ -35,6 +35,7 @@ public class PersonController {
     }
 
     @DeleteMapping
+    @Operation(summary = "Delete person's infos by first and last names")
     public void deletePerson(@RequestParam String firstName, @RequestParam String lastName) throws Exception {
         personService.deletePerson(firstName, lastName);
         logger.debug("Person deleted");

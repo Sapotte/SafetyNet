@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="ALL">
     <Properties>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
         <Property name="APP_LOG_ROOT">c:/temp/logs</Property>
@@ -8,8 +8,8 @@
         <Console name="Console" target="SYSTEM_OUT" follow="true">
             <PatternLayout pattern="%d [%t] %-5p %c{1} - %m%n" />
         </Console>
-        <RollingFile name="fileLogger"
-                     fileName="C:\Users\sarah\DepotGit\OpenClassrooms\SafetyNet\logs\app.log"
+        <File name="fileLogger"
+                     fileName="logs\app.log"
                      filePattern="logs/app-%d{yyyy-MM-dd}.log">
             <PatternLayout>
                 <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
@@ -26,12 +26,12 @@
                     <IfLastModified age="30d" />
                 </Delete>
             </DefaultRolloverStrategy>
-        </RollingFile>
+        </File>
     </Appenders>
     <Loggers>
-        <Root level="info">
+        <Root level="debug">
             <AppenderRef ref="Console" />
-            <AppenderRef ref="File" />
+            <AppenderRef ref="fileLogger" />
         </Root>
     </Loggers>
 </Configuration>
