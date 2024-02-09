@@ -71,14 +71,14 @@ public class PatternHelperTest {
     }
     @Test
     void checkIsValidPersonOk() {
-        assertDoesNotThrow(() -> patternHelper.checkisValidPerson(person));
+        assertDoesNotThrow(() -> patternHelper.checkIsValidPerson(person));
     }
     @Test
     void checkIsValidPersonKo() {
         Person invalidPerson = new Person();
         invalidPerson.setEmail("invalid");
         invalidPerson.setPhone("invalid");
-        assertThrows(InvalidAttributeValueException.class, () -> patternHelper.checkisValidPerson(invalidPerson));
+        assertThrows(InvalidAttributeValueException.class, () -> patternHelper.checkIsValidPerson(invalidPerson));
     }
 
 }

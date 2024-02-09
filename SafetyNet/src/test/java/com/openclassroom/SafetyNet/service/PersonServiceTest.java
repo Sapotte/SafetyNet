@@ -42,7 +42,7 @@ public class PersonServiceTest {
 
     @Test
     void addPersonOk() throws InvalidAttributeValueException {
-        doNothing().when(patternHelper).checkisValidPerson(any());
+        doNothing().when(patternHelper).checkIsValidPerson(any());
 
         personService.addPerson(newPerson);
 
@@ -50,8 +50,43 @@ public class PersonServiceTest {
     }
 
     @Test
-    void addAlreadySavedPersonnKo() {
+    void addAlreadySavedPersonKo() {
         assertThrows(InvalidAttributeValueException.class, () -> personService.addPerson(datas.getPersons().get(0)));
         verify(personRepository, times(0)).savePerson(any(Person.class));
+    }
+
+    @Test
+    void updatePersonOk() throws InvalidAttributeValueException {
+        doNothing().when(patternHelper).checkIsValidPerson(any());
+
+        // Get an already existing person and set the new person with first and last names
+        Person personToUpdate = datas.getPersons().getFirst();
+        newPerson.setFirstName(personToUpdate.getFirstName());
+        newPerson.setLastName(personToUpdate.getLastName());
+
+        personService.updatePerson(newPerson);
+
+        verify(personRepository, times(1)).updatePerson(anyInt(), any(Person.class));
+    }
+    @Test
+    void updateDuplicateKo() {
+        // Duplicate a person in the list
+        datas.getPersons().add(datas.getPersons().getFirst());
+        assertThrows(InvalidAttributeValueException.class, () -> personService.updatePerson(datas.getPersons().get(0)));
+        verify(personRepository, times(0)).updatePerson(anyInt(), any(Person.class));
+    }
+    @Test
+    void deletePersonOk() throws InvalidAttributeValueException {
+        Person personToDelete = datas.getPersons().getFirst();
+        personService.deletePerson(personToDelete.getFirstName(), personToDelete.getLastName());
+
+        verify(personRepository, times(1)).deletePerson(0);
+    }
+    @Test
+    void deleteDuplicateKo() {
+        // Duplicate a person in the list
+        datas.getPersons().add(datas.getPersons().getFirst());
+        assertThrows(InvalidAttributeValueException.class, () -> personService.deletePerson(datas.getPersons().get(0).getFirstName(), datas.getPersons().get(0).getFirstName()));
+        verify(personRepository, times(0)).deletePerson(anyInt());
     }
 }

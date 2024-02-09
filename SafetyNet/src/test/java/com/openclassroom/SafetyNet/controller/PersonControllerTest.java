@@ -37,4 +37,11 @@ public class PersonControllerTest {
 
         verify(personService, times(1)).addPerson(newPerson);
     }
+
+    @Test
+    void updatePersonOk() throws InvalidAttributeValueException {
+        personController.updatePerson(newPerson);
+
+        verify(personService, times(1)).updatePerson(newPerson);
+    }
 }

@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,5 +40,26 @@ public class PersonRepositoryImplTest {
         personRepository.savePerson(newPerson);
 
         assertTrue(datas.getPersons().contains(newPerson));
+    }
+
+    @Test
+    void updatePersonOk() {
+        Person oldInfos = datas.getPersons().getFirst();
+        newPerson.setFirstName(oldInfos.getFirstName());
+        newPerson.setLastName(oldInfos.getLastName());
+
+        personRepository.updatePerson(0, newPerson);
+
+        assertTrue(datas.getPersons().contains(newPerson));
+        assertFalse(datas.getPersons().contains(oldInfos));
+    }
+
+    @Test
+    void deletePersonOk() {
+        Person oldInfos = datas.getPersons().getFirst();
+
+        personRepository.deletePerson(0);
+
+        assertFalse(datas.getPersons().contains(oldInfos));
     }
 }

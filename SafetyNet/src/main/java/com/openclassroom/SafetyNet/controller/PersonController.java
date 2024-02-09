@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InvalidAttributeValueException;
-import java.text.MessageFormat;
 
 @RestController
 @RequestMapping("/person")
@@ -23,18 +22,16 @@ public class PersonController {
     @Operation(summary = "Add person's infos")
     public void addPerson(@RequestBody Person person) throws InvalidAttributeValueException {
         personService.addPerson(person);
-        logger.info("The fireStation number had been successfully saved");
     }
 
     @PutMapping
-    public void updatePerson(@RequestParam Person person) {
-
-        logger.info("The fireStation at the address had been successfully updated");
+    @Operation(summary = "Update person's infos")
+    public void updatePerson(@RequestParam Person person) throws InvalidAttributeValueException {
+        personService.updatePerson(person);
     }
 
     @DeleteMapping
-    public void deletePerson(@RequestParam String address) throws Exception {
-
-        logger.info(MessageFormat.format("The station with the address \"{0}\" has been successfully deleted", address));
+    public void deletePerson(@RequestParam String firstName, @RequestParam String lastName) throws Exception {
+        personService.deletePerson(firstName, lastName);
     }
 }

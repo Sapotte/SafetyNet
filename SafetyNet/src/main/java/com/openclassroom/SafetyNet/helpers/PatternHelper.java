@@ -42,7 +42,7 @@ public class PatternHelper {
         }
     }
 
-    public void checkisValidPerson(Person person) throws InvalidAttributeValueException {
+    public void checkIsValidPerson(Person person) throws InvalidAttributeValueException {
         checkIsValidEmail(person.getEmail());
         checkIsValidName(person.getFirstName());
         checkIsValidName(person.getLastName());
