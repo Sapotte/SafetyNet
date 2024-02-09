@@ -44,4 +44,11 @@ public class PersonControllerTest {
 
         verify(personService, times(1)).updatePerson(newPerson);
     }
+
+    @Test
+    void deletePersonOk() throws Exception {
+        personController.deletePerson(newPerson.getFirstName(), newPerson.getLastName());
+
+        verify(personService, times(1)).deletePerson(newPerson.getFirstName(), newPerson.getLastName());
+    }
 }
