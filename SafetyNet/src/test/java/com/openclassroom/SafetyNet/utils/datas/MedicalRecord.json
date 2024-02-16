@@ -1,0 +1,7 @@
+{
+  "allergies" : [ "allergy" ],
+  "birthdate" : "01/01/1990",
+  "firstName" : "John",
+  "lastName" : "Doe",
+  "medications" : [ "medication1:300mg", "medication2:30mg" ]
+}
