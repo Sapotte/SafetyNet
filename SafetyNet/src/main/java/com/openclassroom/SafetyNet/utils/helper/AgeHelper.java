@@ -19,7 +19,7 @@ public class AgeHelper {
 
         if(age >= 18) {
             return true;
-        } else if (0 <= age && age < 18) {
+        } else if (0 <= age) {
             return false;
         } else {
             throw new InvalidAttributeValueException("Age not valid");
