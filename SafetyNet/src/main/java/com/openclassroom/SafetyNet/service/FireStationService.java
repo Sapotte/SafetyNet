@@ -1,14 +1,26 @@
 package com.openclassroom.SafetyNet.service;
 
+import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestation;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.FireStation;
+import com.openclassroom.SafetyNet.model.Medicalrecord;
+import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
+import com.openclassroom.SafetyNet.utils.helper.AgeHelper;
+import com.openclassroom.SafetyNet.utils.mapper.PersonsCoveredByFirestationMapper;
+import com.openclassroom.SafetyNet.utils.mapper.PersonsCoveredByFirestationMapperImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.management.InvalidAttributeValueException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -18,6 +30,7 @@ public class FireStationService {
     FireStationRepository fireStationRepository;
     @Autowired
     Datas datas;
+    PersonsCoveredByFirestationMapper personsCoveredByFirestationMapper = new PersonsCoveredByFirestationMapperImpl();
 
     public String addFireStation(String address, String station) {
         FireStation newFirestation = new FireStation();
@@ -51,4 +64,33 @@ public class FireStationService {
         }
     }
 
+    public PersonsCoveredByFirestation getPersonCoveredByFirestation(Integer stationNumber) throws InvalidAttributeValueException {
+        List<String> addressesCoveredByStation = datas.getFireStations()
+                .stream()
+                .filter(station -> station.getStation().equals(stationNumber.toString()))
+                .map(FireStation::getAddress)
+                .collect(Collectors.toList());
+
+        if(!addressesCoveredByStation.isEmpty()) {
+            List<Person> personCoveredByFirestation = datas.getPersons()
+                    .stream()
+                    .filter(person -> addressesCoveredByStation.contains(person.getAddress()))
+                    .collect(Collectors.toList());
+
+            List<String> birthDates = new ArrayList<>();
+            for (Person person : personCoveredByFirestation) {
+                birthDates.addAll(datas.getMedicalRecords()
+                        .stream()
+                        .filter(record -> record.getFirstName().equals(person.getFirstName()) && record.getLastName().equals(person.getLastName()))
+                        .map(Medicalrecord::getBirthdate)
+                        .toList());
+            };
+
+            Map<String, Integer> adultChildCount = AgeHelper.INSTANCE.adultChildCount(birthDates);
+            logger.info("Persons found with success");
+            return personsCoveredByFirestationMapper.mapPersonAndAdultChildCountToPersonCoveredByFirestation(personCoveredByFirestation, adultChildCount);
+        } else {
+            throw new NoSuchElementException(MessageFormat.format("No address covered by stationNumber {0}", stationNumber ));
+        }
+    }
 }
