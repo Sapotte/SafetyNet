@@ -1,6 +1,6 @@
 package com.openclassroom.SafetyNet.service;
 
-import com.openclassroom.SafetyNet.helpers.PatternHelper;
+import com.openclassroom.SafetyNet.utils.helper.PatternHelper;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.PersonRepository;
