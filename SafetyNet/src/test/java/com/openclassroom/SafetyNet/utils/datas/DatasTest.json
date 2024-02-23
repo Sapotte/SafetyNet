@@ -11,33 +11,45 @@
     {
       "address":"3 Ghi St",
       "station":"3"
+    },
+    {
+      "address":"4 Ghi St",
+      "station":"1"
+    },
+    {
+      "address":"5 Jkl St",
+      "station":"2"
+    },
+    {
+      "address":"6 Mno St",
+      "station":"3"
     }
   ],
   "persons":[
     {
-      "address":"947 E. Rose Dr",
+      "address":"1 Abc St",
       "city":"Culver",
       "email":"jane.doe@email.com",
       "firstName":"Jane",
-      "lastName":"Doe",
+      "lastName":"DoeStation1",
       "phone":"841-874-7784",
       "zip":"97451"
     },
     {
-      "address":"748 Townings Dr",
+      "address":"1 Abc St",
       "city":"Culver",
-      "email":"clivfd@ymail.com",
-      "firstName":"Clive",
-      "lastName":"Ferguson",
+      "email":"johnDoe@email.com",
+      "firstName":"John",
+      "lastName":"DoeStation1",
       "phone":"841-874-6741",
       "zip":"97451"
     },
     {
-      "address":"951 LoneTree Rd",
+      "address":"6 Mno S",
       "city":"Culver",
-      "email":"gramps@email.com",
-      "firstName":"Eric",
-      "lastName":"Cadigan",
+      "email":"johnDoeStation3@email.com",
+      "firstName":"John",
+      "lastName":"DoeStation3",
       "phone":"841-874-7458",
       "zip":"97451"
     }
@@ -47,9 +59,9 @@
       "allergies":[
 
       ],
-      "birthdate":"03/06/2014",
-      "firstName":"Kendrik",
-      "lastName":"Stelzer",
+      "birthdate":"03/06/2020",
+      "firstName":"Jane",
+      "lastName":"DoeStation1",
       "medications":[
         "noxidian:100mg",
         "pharmacol:2500mg"
@@ -59,9 +71,9 @@
       "allergies":[
 
       ],
-      "birthdate":"03/06/1994",
-      "firstName":"Clive",
-      "lastName":"Ferguson",
+      "birthdate":"03/06/1995",
+      "firstName":"John",
+      "lastName":"DoeStation1",
       "medications":[
 
       ]
@@ -71,8 +83,8 @@
 
       ],
       "birthdate":"08/06/1945",
-      "firstName":"Eric",
-      "lastName":"Cadigan",
+      "firstName":"John",
+      "lastName":"DoeStation3",
       "medications":[
         "tradoxidine:400mg"
       ]

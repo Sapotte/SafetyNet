@@ -1,6 +1,7 @@
 package com.openclassroom.SafetyNet.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestation;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.FireStation;
 import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
@@ -11,11 +12,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.management.InvalidAttributeValueException;
 import java.io.File;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import static com.openclassroom.SafetyNet.utils.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -73,5 +77,21 @@ class FireStationServiceTest {
 
         assertThrows(ClassNotFoundException.class, () -> fireStationService.deleteFirestationByAddress(FIRESTATION_WRONG_ADDRESS));
         verify(fireStationRepository, times(0)).deleteFirestation(anyInt());
+    }
+
+    @Test
+    void getPersonsCoveredByFirestationOk() throws InvalidAttributeValueException {
+        PersonsCoveredByFirestation result = fireStationService.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_ID));
+
+        assertTrue(result.getAdultsCount() == 1);
+        assertTrue(result.getChildsCount() == 1);
+        assertTrue(result.getPersonsBasicInfosList().size() == 2);
+    }
+
+    @Test
+    void getPersonsCoveredByFirestationNoStationFound() throws InvalidAttributeValueException {
+
+        assertThrows(NoSuchElementException.class, () -> fireStationService.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_WRONG_ID)));
+
     }
 }
