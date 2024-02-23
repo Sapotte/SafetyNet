@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.management.InvalidAttributeValueException;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.openclassroom.SafetyNet.utils.Constants.*;
@@ -93,5 +94,11 @@ class FireStationServiceTest {
 
         assertThrows(NoSuchElementException.class, () -> fireStationService.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_WRONG_ID)));
 
+    }
+    @Test
+    void getPhoneNumbersByFirestationOk() {
+        List<String> result = fireStationService.getPhoneNumbersByFirestation(FIRESTATION_ID);
+
+        assertTrue(result.size() == 2);
     }
 }

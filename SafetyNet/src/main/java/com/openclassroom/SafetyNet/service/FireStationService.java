@@ -65,11 +65,7 @@ public class FireStationService {
     }
 
     public PersonsCoveredByFirestation getPersonCoveredByFirestation(Integer stationNumber) throws InvalidAttributeValueException {
-        List<String> addressesCoveredByStation = datas.getFireStations()
-                .stream()
-                .filter(station -> station.getStation().equals(stationNumber.toString()))
-                .map(FireStation::getAddress)
-                .collect(Collectors.toList());
+        List<String> addressesCoveredByStation = getAddressesCoveredByFirestation(stationNumber.toString());
 
         if(!addressesCoveredByStation.isEmpty()) {
             List<Person> personCoveredByFirestation = datas.getPersons()
@@ -92,5 +88,23 @@ public class FireStationService {
         } else {
             throw new NoSuchElementException(MessageFormat.format("No address covered by stationNumber {0}", stationNumber ));
         }
+    }
+
+    public List<String> getPhoneNumbersByFirestation(String firestation) {
+        List<String> addressesCoveredByStation = getAddressesCoveredByFirestation(firestation);
+        return datas.getPersons().stream().filter(person -> addressesCoveredByStation.contains(person.getAddress())).map(Person::getPhone).toList();
+    }
+
+    /**
+     * Get all the addresses covered by a firestation
+     * @param stationNumber
+     * @return list of addresses covered by the firestation
+     */
+    private List<String> getAddressesCoveredByFirestation(String stationNumber) {
+        return datas.getFireStations()
+                .stream()
+                .filter(station -> station.getStation().equals(stationNumber))
+                .map(FireStation::getAddress)
+                .collect(Collectors.toList());
     }
 }

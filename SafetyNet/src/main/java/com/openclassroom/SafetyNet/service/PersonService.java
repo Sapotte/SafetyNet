@@ -94,11 +94,12 @@ public class PersonService {
                 childsAtAddress.put(person, AgeHelper.INSTANCE.getAge(birthDate));
             }
         }
-
+        logger.info("Persons at the address retrieved");
         for (Map.Entry<Person, Integer> child : childsAtAddress.entrySet()) {
             List<Person> familyMembers = adultsAtAddress.stream().filter(adult -> child.getKey().getLastName().equals(adult.getLastName())).collect(Collectors.toList());
             childsInfoByAddress.add(childInfoMapper.mapChildInfoFromPersonAgeAndFamilyMemberList(child.getKey(), child.getValue(), familyMembers));
         }
+        logger.info("Childs'info successfully retrieved");
         return childsInfoByAddress;
     }
 }
