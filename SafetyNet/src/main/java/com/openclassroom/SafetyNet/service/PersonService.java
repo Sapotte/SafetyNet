@@ -1,9 +1,13 @@
 package com.openclassroom.SafetyNet.service;
 
-import com.openclassroom.SafetyNet.utils.helper.PatternHelper;
+import com.openclassroom.SafetyNet.dto.ChildInfo;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.PersonRepository;
+import com.openclassroom.SafetyNet.utils.helper.AgeHelper;
+import com.openclassroom.SafetyNet.utils.helper.PatternHelper;
+import com.openclassroom.SafetyNet.utils.mapper.ChildInfoMapper;
+import com.openclassroom.SafetyNet.utils.mapper.ChildInfoMapperImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,11 @@ import org.springframework.stereotype.Service;
 
 import javax.management.InvalidAttributeValueException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -22,6 +31,9 @@ public class PersonService {
     Datas datas;
     @Autowired
     PatternHelper patternHelper;
+
+    ChildInfoMapper childInfoMapper = new ChildInfoMapperImpl();
+
     public void addPerson(Person newPerson) throws InvalidAttributeValueException {
         patternHelper.checkIsValidPerson(newPerson);
         // Check if the person is not already in the list
@@ -62,5 +74,31 @@ public class PersonService {
             logger.error("Invalid number of matches in the list for this person");
             throw new InvalidAttributeValueException(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), firstName, lastName));
         }
+    }
+
+    public List<ChildInfo> getChildsByAddress(String address) {
+        List<ChildInfo> childsInfoByAddress = new ArrayList<>();
+        List<Person> personsAtAddress = datas.getPersons().stream().filter(person -> address.equals(person.getAddress())).collect(Collectors.toList());
+        Map<Person, Integer> childsAtAddress = new HashMap<>();
+        List<Person> adultsAtAddress = new ArrayList<>();
+        for(Person person : personsAtAddress) {
+            String birthDate = datas.getMedicalRecords()
+                    .stream()
+                    .filter(record -> person.getFirstName().equals(record.getFirstName()) && person.getLastName().equals(record.getLastName()))
+                    .toList()
+                    .get(0)
+                    .getBirthdate();
+            if(AgeHelper.INSTANCE.isAdult(birthDate)) {
+                adultsAtAddress.add(person);
+            }else {
+                childsAtAddress.put(person, AgeHelper.INSTANCE.getAge(birthDate));
+            }
+        }
+
+        for (Map.Entry<Person, Integer> child : childsAtAddress.entrySet()) {
+            List<Person> familyMembers = adultsAtAddress.stream().filter(adult -> child.getKey().getLastName().equals(adult.getLastName())).collect(Collectors.toList());
+            childsInfoByAddress.add(childInfoMapper.mapChildInfoFromPersonAgeAndFamilyMemberList(child.getKey(), child.getValue(), familyMembers));
+        }
+        return childsInfoByAddress;
     }
 }

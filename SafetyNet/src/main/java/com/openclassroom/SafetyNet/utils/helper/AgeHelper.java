@@ -1,6 +1,5 @@
 package com.openclassroom.SafetyNet.utils.helper;
 
-import javax.management.InvalidAttributeValueException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -14,19 +13,17 @@ public class AgeHelper {
         return Period.between(LocalDate.parse(birthDate, formatter), LocalDate.now()).getYears();
     }
 
-    public boolean isAdult(String birthDate) throws InvalidAttributeValueException {
+    public boolean isAdult(String birthDate) {
         Integer age = getAge(birthDate);
 
         if(age >= 18) {
             return true;
-        } else if (0 <= age) {
-            return false;
         } else {
-            throw new InvalidAttributeValueException("Age not valid");
+            return false;
         }
     }
 
-    public Map<String, Integer> adultChildCount(List<String> birthDates) throws InvalidAttributeValueException {
+    public Map<String, Integer> adultChildCount(List<String> birthDates) {
         Integer adultsCount = 0;
         Integer childsCount = 0;
 
