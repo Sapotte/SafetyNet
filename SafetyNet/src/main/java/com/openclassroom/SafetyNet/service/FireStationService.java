@@ -84,7 +84,7 @@ public class FireStationService {
                         .filter(record -> record.getFirstName().equals(person.getFirstName()) && record.getLastName().equals(person.getLastName()))
                         .map(Medicalrecord::getBirthdate)
                         .toList());
-            };
+            }
 
             Map<String, Integer> adultChildCount = AgeHelper.INSTANCE.adultChildCount(birthDates);
             logger.info("Persons found with success");
