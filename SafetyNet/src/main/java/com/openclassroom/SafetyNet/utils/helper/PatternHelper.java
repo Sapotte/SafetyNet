@@ -1,4 +1,4 @@
-package com.openclassroom.SafetyNet.helpers;
+package com.openclassroom.SafetyNet.utils.helper;
 
 import com.openclassroom.SafetyNet.model.Person;
 import org.springframework.stereotype.Component;

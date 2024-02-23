@@ -2,6 +2,7 @@ package com.openclassroom.SafetyNet.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassroom.SafetyNet.model.Person;
+import com.openclassroom.SafetyNet.utils.helper.PatternHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
