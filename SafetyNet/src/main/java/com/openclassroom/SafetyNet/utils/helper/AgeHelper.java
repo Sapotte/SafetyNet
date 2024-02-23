@@ -16,11 +16,7 @@ public class AgeHelper {
     public boolean isAdult(String birthDate) {
         Integer age = getAge(birthDate);
 
-        if(age >= 18) {
-            return true;
-        } else {
-            return false;
-        }
+        return age > 18;
     }
 
     public Map<String, Integer> adultChildCount(List<String> birthDates) {
