@@ -63,8 +63,8 @@
       "firstName":"Jane",
       "lastName":"DoeStation1",
       "medications":[
-        "noxidian:100mg",
-        "pharmacol:2500mg"
+        "med1:1mg",
+        "med2:2mg"
       ]
     },
     {

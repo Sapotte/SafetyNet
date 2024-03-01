@@ -18,6 +18,6 @@ public class Constants {
     public static final String CITY = "newCity";
     public static final String ZIP_CODE = "0987";
     public static final List<String> ALLERGIES = Arrays.asList("newAllergy1", "newAllergy2");
-    public static final List<String> MEDICATIONS = Arrays.asList("newMed1: 100mg", "newMed2: 200mg");
+    public static final List<String> MEDICATIONS = Arrays.asList("med1:1mg", "med2:2mg");
 
 }

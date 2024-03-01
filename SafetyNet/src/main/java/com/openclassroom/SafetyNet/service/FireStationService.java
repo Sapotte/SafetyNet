@@ -9,6 +9,8 @@ import com.openclassroom.SafetyNet.model.Medicalrecord;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
 import com.openclassroom.SafetyNet.utils.helper.AgeHelper;
+import com.openclassroom.SafetyNet.utils.mapper.PersonsCoveredByFirestationMapper;
+import com.openclassroom.SafetyNet.utils.mapper.PersonsCoveredByFirestationMapperImpl;
 import com.openclassroom.SafetyNet.utils.mapper.PersonsInfoExtendsMapper;
 import com.openclassroom.SafetyNet.utils.mapper.PersonsInfoExtendsMapperImpl;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +31,7 @@ public class FireStationService {
     @Autowired
     Datas datas;
     PersonsInfoExtendsMapper personsInfoExtendsMapper = new PersonsInfoExtendsMapperImpl();
+    PersonsCoveredByFirestationMapper personsCoveredByFirestationMapper = new PersonsCoveredByFirestationMapperImpl();
 
     public String addFireStation(String address, String station) {
         FireStation newFirestation = new FireStation();
@@ -82,7 +85,7 @@ public class FireStationService {
 
             Map<String, Integer> adultChildCount = AgeHelper.INSTANCE.adultChildCount(birthDates);
             logger.info("Persons found with success");
-            return null;
+            return personsCoveredByFirestationMapper.mapPersonAndAdultChildCountToPersonCoveredByFirestation(personCoveredByFirestation, adultChildCount);
         } else {
             throw new NoSuchElementException(MessageFormat.format("No address covered by stationNumber {0}", stationNumber));
         }

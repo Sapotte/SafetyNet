@@ -1,6 +1,8 @@
 package com.openclassroom.SafetyNet.controller;
 
 import com.openclassroom.SafetyNet.dto.ChildInfoDto;
+import com.openclassroom.SafetyNet.dto.PersonInfoExtendsDto;
+import com.openclassroom.SafetyNet.dto.PersonsByAddressDto;
 import com.openclassroom.SafetyNet.service.FireStationService;
 import com.openclassroom.SafetyNet.service.PersonService;
 import org.junit.jupiter.api.Test;
@@ -10,7 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.openclassroom.SafetyNet.utils.Constants.FIRESTATION_ADDRESS;
 import static com.openclassroom.SafetyNet.utils.Constants.FIRESTATION_ID;
@@ -36,7 +40,6 @@ public class AlertControllerTest {
         verify(personService, times(1)).getChildsByAddress(FIRESTATION_ADDRESS);
         assertEquals(mockResult, response.getBody());
     }
-
     @Test
     void getPhoneNumbersCoveredByFirestationOk() {
         List<String> mockResult = List.of(anyString());
@@ -45,6 +48,27 @@ public class AlertControllerTest {
         ResponseEntity<List<String>> response = alertsController.getPhoneNumbersByFirestation(FIRESTATION_ID);
 
         verify(fireStationService, times(1)).getPhoneNumbersByFirestation(FIRESTATION_ID);
+        assertEquals(mockResult, response.getBody());
+    }
+    @Test
+    void getPersonsByAddressOk() {
+        PersonsByAddressDto mockResult = new PersonsByAddressDto();
+        when(fireStationService.getPersonsByAddress(FIRESTATION_ADDRESS)).thenReturn(mockResult);
+
+        ResponseEntity<PersonsByAddressDto> response = alertsController.getPersonsByAddress(FIRESTATION_ADDRESS);
+
+        verify(fireStationService, times(1)).getPersonsByAddress(FIRESTATION_ADDRESS);
+        assertEquals(mockResult, response.getBody());
+    }
+
+    @Test
+    void getAddressesAndTheirResidentsOk() {
+        Map<String, Map<String, List<PersonInfoExtendsDto>>> mockResult = new HashMap<>();
+        when(fireStationService.getAddressesAndTheirResidentsCoveredByStations(List.of(FIRESTATION_ID))).thenReturn(mockResult);
+
+        ResponseEntity<Map<String, Map<String, List<PersonInfoExtendsDto>>>> response = alertsController.getAddressesAndTheirResidentsDeservedByStations(List.of(FIRESTATION_ID));
+
+        verify(fireStationService, times(1)).getAddressesAndTheirResidentsCoveredByStations(List.of(FIRESTATION_ID));
         assertEquals(mockResult, response.getBody());
     }
 

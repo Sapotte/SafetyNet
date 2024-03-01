@@ -1,6 +1,8 @@
 package com.openclassroom.SafetyNet.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassroom.SafetyNet.dto.PersonInfoExtendsDto;
+import com.openclassroom.SafetyNet.dto.PersonsByAddressDto;
 import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestationDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.FireStation;
@@ -16,11 +18,11 @@ import javax.management.InvalidAttributeValueException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static com.openclassroom.SafetyNet.utils.Constants.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -100,5 +102,25 @@ class FireStationServiceTest {
         List<String> result = fireStationService.getPhoneNumbersByFirestation(FIRESTATION_ID);
 
         assertTrue(result.size() == 2);
+    }
+
+    @Test
+    void getPersonsByAddressOk() {
+        PersonsByAddressDto result = fireStationService.getPersonsByAddress(FIRESTATION_ADDRESS);
+
+        assertEquals(FIRESTATION_ID, result.getStation());
+        assertEquals(FIRST_NAME, result.getPersonInfoExtendsDtoList().getFirst().getFirstName());
+        assertEquals(MEDICATIONS, result.getPersonInfoExtendsDtoList().getFirst().getMedications()) ;
+        assertEquals(List.of(), result.getPersonInfoExtendsDtoList().getFirst().getAllergies());
+    }
+
+    @Test
+    void getAddressesAndReididentsOk() {
+        Map<String, Map<String, List<PersonInfoExtendsDto>>> result = fireStationService.getAddressesAndTheirResidentsCoveredByStations(List.of(FIRESTATION_ID));
+
+        assertTrue(result.get(FIRESTATION_ID).keySet().contains(FIRESTATION_ADDRESS));
+        assertEquals(FIRST_NAME, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getFirstName());
+        assertEquals(MEDICATIONS, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getMedications()) ;
+        assertEquals(List.of(), result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getAllergies());
     }
 }
