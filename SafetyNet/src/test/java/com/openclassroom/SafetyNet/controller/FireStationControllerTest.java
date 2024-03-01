@@ -1,6 +1,6 @@
 package com.openclassroom.SafetyNet.controller;
 
-import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestation;
+import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestationDto;
 import com.openclassroom.SafetyNet.service.FireStationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,11 +49,11 @@ class FireStationControllerTest {
 
     @Test
     void getPersonsCoveredByFirestationOk() throws InvalidAttributeValueException {
-        PersonsCoveredByFirestation mockResult = new PersonsCoveredByFirestation();
-        mockResult.setPersonsBasicInfosList(Collections.emptyList());
+        PersonsCoveredByFirestationDto mockResult = new PersonsCoveredByFirestationDto();
+        mockResult.setPersonsBasicInfosDtoList(Collections.emptyList());
         when(fireStationService.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_ID))).thenReturn(mockResult);
 
-        ResponseEntity<PersonsCoveredByFirestation> response = fireStationController.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_ID));
+        ResponseEntity<PersonsCoveredByFirestationDto> response = fireStationController.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_ID));
 
         verify(fireStationService, times(1)).getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_ID));
     }

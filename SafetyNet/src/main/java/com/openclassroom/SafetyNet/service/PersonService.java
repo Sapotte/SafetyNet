@@ -1,6 +1,6 @@
 package com.openclassroom.SafetyNet.service;
 
-import com.openclassroom.SafetyNet.dto.ChildInfo;
+import com.openclassroom.SafetyNet.dto.ChildInfoDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.PersonRepository;
@@ -76,8 +76,8 @@ public class PersonService {
         }
     }
 
-    public List<ChildInfo> getChildsByAddress(String address) {
-        List<ChildInfo> childsInfoByAddress = new ArrayList<>();
+    public List<ChildInfoDto> getChildsByAddress(String address) {
+        List<ChildInfoDto> childsInfoByAddress = new ArrayList<>();
         List<Person> personsAtAddress = datas.getPersons().stream().filter(person -> address.equals(person.getAddress())).collect(Collectors.toList());
         Map<Person, Integer> childsAtAddress = new HashMap<>();
         List<Person> adultsAtAddress = new ArrayList<>();

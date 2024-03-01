@@ -2,10 +2,11 @@ package com.openclassroom.SafetyNet.dto;
 
 import java.util.List;
 
-public class PersonsCoveredByFirestation {
+public class PersonsCoveredByFirestationDto {
     public Integer adultsCount;
     public Integer childsCount;
-    public List<PersonsBasicInfos> personsBasicInfosList;
+    public List<PersonsBasicInfosDto> personsBasicInfosDtoList;
+
 
     public Integer getAdultsCount() {
         return adultsCount;
@@ -23,20 +24,20 @@ public class PersonsCoveredByFirestation {
         this.childsCount = childsCount;
     }
 
-    public List<PersonsBasicInfos> getPersonsBasicInfosList() {
-        return personsBasicInfosList;
+    public List<PersonsBasicInfosDto> getPersonsBasicInfosDtoList() {
+        return personsBasicInfosDtoList;
     }
 
-    public void setPersonsBasicInfosList(List<PersonsBasicInfos> personsBasicInfosList) {
-        this.personsBasicInfosList = personsBasicInfosList;
+    public void setPersonsBasicInfosDtoList(List<PersonsBasicInfosDto> personsBasicInfosDtoList) {
+        this.personsBasicInfosDtoList = personsBasicInfosDtoList;
     }
 
     @Override
     public String toString() {
-        return "PersonsCoveredByFirestation{" +
+        return "PersonsCoveredByFirestationDto{" +
                 "adultsCount=" + adultsCount +
                 ", childsCount=" + childsCount +
-                ", personsBasicInfosList=" + personsBasicInfosList +
+                ", personsBasicInfosDtoList=" + personsBasicInfosDtoList +
                 '}';
     }
 }

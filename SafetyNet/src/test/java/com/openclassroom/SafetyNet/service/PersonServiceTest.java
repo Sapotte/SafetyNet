@@ -1,7 +1,7 @@
 package com.openclassroom.SafetyNet.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.openclassroom.SafetyNet.dto.ChildInfo;
+import com.openclassroom.SafetyNet.dto.ChildInfoDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.PersonRepository;
@@ -95,7 +95,7 @@ public class PersonServiceTest {
     }
     @Test
     void getChildsByAddressOk() {
-        List<ChildInfo> result = personService.getChildsByAddress(FIRESTATION_ADDRESS);
+        List<ChildInfoDto> result = personService.getChildsByAddress(FIRESTATION_ADDRESS);
 
         assertTrue(result.size() == 1);
         assertTrue(result.getFirst().getFamilyMembers().size() == 1);

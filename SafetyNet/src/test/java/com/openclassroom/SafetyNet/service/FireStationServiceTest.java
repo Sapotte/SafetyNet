@@ -1,7 +1,7 @@
 package com.openclassroom.SafetyNet.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestation;
+import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestationDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.FireStation;
 import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
@@ -82,11 +82,11 @@ class FireStationServiceTest {
 
     @Test
     void getPersonsCoveredByFirestationOk() throws InvalidAttributeValueException {
-        PersonsCoveredByFirestation result = fireStationService.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_ID));
+        PersonsCoveredByFirestationDto result = fireStationService.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_ID));
 
         assertTrue(result.getAdultsCount() == 1);
         assertTrue(result.getChildsCount() == 1);
-        assertTrue(result.getPersonsBasicInfosList().size() == 2);
+        assertTrue(result.getPersonsBasicInfosDtoList().size() == 2);
     }
 
     @Test

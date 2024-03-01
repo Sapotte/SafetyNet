@@ -1,25 +1,23 @@
 package com.openclassroom.SafetyNet.service;
 
-import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestation;
+import com.openclassroom.SafetyNet.dto.PersonInfoExtendsDto;
+import com.openclassroom.SafetyNet.dto.PersonsByAddressDto;
+import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestationDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.FireStation;
 import com.openclassroom.SafetyNet.model.Medicalrecord;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
 import com.openclassroom.SafetyNet.utils.helper.AgeHelper;
-import com.openclassroom.SafetyNet.utils.mapper.PersonsCoveredByFirestationMapper;
-import com.openclassroom.SafetyNet.utils.mapper.PersonsCoveredByFirestationMapperImpl;
+import com.openclassroom.SafetyNet.utils.mapper.PersonsInfoExtendsMapper;
+import com.openclassroom.SafetyNet.utils.mapper.PersonsInfoExtendsMapperImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.management.InvalidAttributeValueException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,7 +28,7 @@ public class FireStationService {
     FireStationRepository fireStationRepository;
     @Autowired
     Datas datas;
-    PersonsCoveredByFirestationMapper personsCoveredByFirestationMapper = new PersonsCoveredByFirestationMapperImpl();
+    PersonsInfoExtendsMapper personsInfoExtendsMapper = new PersonsInfoExtendsMapperImpl();
 
     public String addFireStation(String address, String station) {
         FireStation newFirestation = new FireStation();
@@ -64,10 +62,10 @@ public class FireStationService {
         }
     }
 
-    public PersonsCoveredByFirestation getPersonCoveredByFirestation(Integer stationNumber) throws InvalidAttributeValueException {
+    public PersonsCoveredByFirestationDto getPersonCoveredByFirestation(Integer stationNumber) {
         List<String> addressesCoveredByStation = getAddressesCoveredByFirestation(stationNumber.toString());
 
-        if(!addressesCoveredByStation.isEmpty()) {
+        if (!addressesCoveredByStation.isEmpty()) {
             List<Person> personCoveredByFirestation = datas.getPersons()
                     .stream()
                     .filter(person -> addressesCoveredByStation.contains(person.getAddress()))
@@ -84,9 +82,9 @@ public class FireStationService {
 
             Map<String, Integer> adultChildCount = AgeHelper.INSTANCE.adultChildCount(birthDates);
             logger.info("Persons found with success");
-            return personsCoveredByFirestationMapper.mapPersonAndAdultChildCountToPersonCoveredByFirestation(personCoveredByFirestation, adultChildCount);
+            return null;
         } else {
-            throw new NoSuchElementException(MessageFormat.format("No address covered by stationNumber {0}", stationNumber ));
+            throw new NoSuchElementException(MessageFormat.format("No address covered by stationNumber {0}", stationNumber));
         }
     }
 
@@ -97,6 +95,7 @@ public class FireStationService {
 
     /**
      * Get all the addresses covered by a firestation
+     *
      * @param stationNumber
      * @return list of addresses covered by the firestation
      */
@@ -106,5 +105,48 @@ public class FireStationService {
                 .filter(station -> station.getStation().equals(stationNumber))
                 .map(FireStation::getAddress)
                 .collect(Collectors.toList());
+    }
+
+    public PersonsByAddressDto getPersonsByAddress(String address) {
+        PersonsByAddressDto personsByAddressDto = new PersonsByAddressDto();
+        List<PersonInfoExtendsDto> extendsInfoResidents = getPersonsInfoExtendsByAddress(address);
+        personsByAddressDto.setStation(datas.getFireStations().stream().filter(station -> address.equals(station.getAddress())).findAny().get().getStation());
+        personsByAddressDto.setPersonInfoExtendsDtoList(extendsInfoResidents);
+
+        return personsByAddressDto;
+    }
+
+    private List<PersonInfoExtendsDto> getPersonsInfoExtendsByAddress(String address) {
+        List<PersonInfoExtendsDto> extendsInfoResidents = new ArrayList<>();
+        List<Person> personsAtAddress = datas.getPersons().stream().filter(person -> address.equals(person.getAddress())).collect(Collectors.toList());
+        for (Person resident : personsAtAddress) {
+            Optional<Medicalrecord> medicalRecord = datas.getMedicalRecords()
+                    .stream()
+                    .filter(record -> resident.getLastName().equals(record.getLastName()) && resident.getFirstName()
+                            .equals(record.getFirstName()))
+                    .findFirst();
+            if (medicalRecord.isPresent()) {
+                extendsInfoResidents.add(personsInfoExtendsMapper.mapPersonAndMedicalRecordToPersonsInfoExtends(resident, medicalRecord.get(), AgeHelper.INSTANCE.getAge(medicalRecord.get().getBirthdate())));
+            }
+        }
+        return extendsInfoResidents;
+    }
+
+    public Map<String, Map<String, List<PersonInfoExtendsDto>>> getAddressesAndTheirResidentsCoveredByStations(List<String> stations) {
+        Map<String, Map<String, List<PersonInfoExtendsDto>>> addressesAndTheirResidentsCoveredByStation = new HashMap<>();
+        for (String station : stations) {
+            Map<String, List<PersonInfoExtendsDto>> personsByAddress= new HashMap<>();
+            List<String> addressesCoveredByStation = datas.getFireStations()
+                    .stream()
+                    .filter(stationItem -> stationItem.getStation().equals(station))
+                    .map(FireStation::getAddress)
+                    .collect(Collectors.toList());
+
+            for(String address: addressesCoveredByStation) {
+                personsByAddress.put(address, getPersonsInfoExtendsByAddress(address));
+            }
+           addressesAndTheirResidentsCoveredByStation.put(station, personsByAddress);
+        }
+        return addressesAndTheirResidentsCoveredByStation;
     }
 }

@@ -1,6 +1,6 @@
 package com.openclassroom.SafetyNet.controller;
 
-import com.openclassroom.SafetyNet.dto.ChildInfo;
+import com.openclassroom.SafetyNet.dto.ChildInfoDto;
 import com.openclassroom.SafetyNet.service.FireStationService;
 import com.openclassroom.SafetyNet.service.PersonService;
 import org.junit.jupiter.api.Test;
@@ -28,10 +28,10 @@ public class AlertControllerTest {
 
     @Test
     void getChildsInfoByAddressOk() {
-        List<ChildInfo> mockResult = List.of(new ChildInfo());
+        List<ChildInfoDto> mockResult = List.of(new ChildInfoDto());
         when(personService.getChildsByAddress(FIRESTATION_ADDRESS)).thenReturn(mockResult);
 
-        ResponseEntity<List<ChildInfo>> response = alertsController.getChildsInfosByAddress(FIRESTATION_ADDRESS);
+        ResponseEntity<List<ChildInfoDto>> response = alertsController.getChildsInfosByAddress(FIRESTATION_ADDRESS);
 
         verify(personService, times(1)).getChildsByAddress(FIRESTATION_ADDRESS);
         assertEquals(mockResult, response.getBody());

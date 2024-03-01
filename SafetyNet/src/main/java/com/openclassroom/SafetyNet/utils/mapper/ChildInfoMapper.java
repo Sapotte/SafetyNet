@@ -1,6 +1,6 @@
 package com.openclassroom.SafetyNet.utils.mapper;
 
-import com.openclassroom.SafetyNet.dto.ChildInfo;
+import com.openclassroom.SafetyNet.dto.ChildInfoDto;
 import com.openclassroom.SafetyNet.model.Person;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,5 +13,5 @@ public interface ChildInfoMapper {
     @Mapping(target = "lastName", source = "person.lastName")
     @Mapping(target = "age", source = "age")
     @Mapping(target = "familyMembers", source = "familyMembers")
-    ChildInfo mapChildInfoFromPersonAgeAndFamilyMemberList(Person person, Integer age, List<Person> familyMembers);
+    ChildInfoDto mapChildInfoFromPersonAgeAndFamilyMemberList(Person person, Integer age, List<Person> familyMembers);
 }

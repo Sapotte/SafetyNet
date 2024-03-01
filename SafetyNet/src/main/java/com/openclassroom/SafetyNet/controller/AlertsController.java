@@ -1,6 +1,8 @@
 package com.openclassroom.SafetyNet.controller;
 
-import com.openclassroom.SafetyNet.dto.ChildInfo;
+import com.openclassroom.SafetyNet.dto.ChildInfoDto;
+import com.openclassroom.SafetyNet.dto.PersonInfoExtendsDto;
+import com.openclassroom.SafetyNet.dto.PersonsByAddressDto;
 import com.openclassroom.SafetyNet.service.FireStationService;
 import com.openclassroom.SafetyNet.service.PersonService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class AlertsController {
@@ -32,9 +35,9 @@ public class AlertsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Children found successfully")
     })
-    public ResponseEntity<List<ChildInfo>> getChildsInfosByAddress(@RequestParam String address) {
-        List<ChildInfo> childInfos = personService.getChildsByAddress(address);
-        return new ResponseEntity<>(childInfos, HttpStatusCode.valueOf(200));
+    public ResponseEntity<List<ChildInfoDto>> getChildsInfosByAddress(@RequestParam String address) {
+        List<ChildInfoDto> childInfoDtos = personService.getChildsByAddress(address);
+        return new ResponseEntity<>(childInfoDtos, HttpStatusCode.valueOf(200));
     }
 
     @GetMapping("/phoneAlert")
@@ -45,6 +48,26 @@ public class AlertsController {
     public ResponseEntity<List<String>> getPhoneNumbersByFirestation(@RequestParam String firestation) {
         List<String> phoneNumberList = fireStationService.getPhoneNumbersByFirestation(firestation);
         return new ResponseEntity<>(phoneNumberList, HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping("/fire")
+    @Operation(summary = "Get persons living at an address")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Persons found successfully")
+    })
+    public ResponseEntity<PersonsByAddressDto> getPersonsByAddress(@RequestParam String address) {
+        PersonsByAddressDto personsByAddressDto = fireStationService.getPersonsByAddress(address);
+        return new ResponseEntity<>(personsByAddressDto, HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping("/flood")
+    @Operation(summary = "Get all adresses deserved by a station and the their residents")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Addresses and residents found successfully")
+    })
+    public ResponseEntity<Map<String, Map<String, List<PersonInfoExtendsDto>>>> getAddressesAndTheirResidentsDeservedByStations(@RequestParam List<String> stations) {
+        Map<String, Map<String, List<PersonInfoExtendsDto>>> addressesAndResidents = fireStationService.getAddressesAndTheirResidentsCoveredByStations(stations);
+        return new ResponseEntity<>(addressesAndResidents, HttpStatusCode.valueOf(200));
     }
 
 }

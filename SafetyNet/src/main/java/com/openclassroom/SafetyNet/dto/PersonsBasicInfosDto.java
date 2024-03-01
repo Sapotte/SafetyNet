@@ -1,6 +1,6 @@
 package com.openclassroom.SafetyNet.dto;
 
-public class PersonsBasicInfos {
+public class PersonsBasicInfosDto {
     public String firstName;
     public String  lastName;
     public String address;

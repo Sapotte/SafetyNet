@@ -4,7 +4,7 @@ import com.openclassroom.SafetyNet.model.Person;
 
 import java.util.List;
 
-public class ChildInfo {
+public class ChildInfoDto {
     public String firstName;
     public String lastName;
     public Integer age;
