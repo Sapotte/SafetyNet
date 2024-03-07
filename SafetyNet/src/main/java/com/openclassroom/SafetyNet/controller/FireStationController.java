@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.management.InvalidAttributeValueException;
 import java.text.MessageFormat;
 
 @RestController
@@ -22,15 +21,21 @@ public class FireStationController {
     private FireStationService fireStationService;
 
     @PostMapping
-    public void addFireStation(@RequestParam String address, @RequestParam String station) {
+    public ResponseEntity<String> addFireStation(@RequestParam String address, @RequestParam String station) {
         String fireStationNumber = fireStationService.addFireStation(address, station);
         logger.info(MessageFormat.format("The fireStation number \"{0}\" has been successfully saved", fireStationNumber));
+        return new ResponseEntity<>("Firestation created", HttpStatusCode.valueOf(201));
     }
 
     @PutMapping
-    public void updateFireStationNumber(@RequestParam String address, @RequestParam String station) {
+    public ResponseEntity<String> updateFireStationNumber(@RequestParam String address, @RequestParam String station) {
+        try{
             fireStationService.updateFireStation(address, station);
             logger.info(MessageFormat.format("The fireStation at the address \"{0}\" has been successfully updated", address));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(404));
+        }
+        return new ResponseEntity<>("Firestation updated", HttpStatusCode.valueOf(200));
     }
 
     @DeleteMapping
@@ -40,7 +45,7 @@ public class FireStationController {
     }
 
     @GetMapping
-    public ResponseEntity<PersonsCoveredByFirestationDto> getPersonCoveredByFirestation(@RequestParam int stationNumber) throws InvalidAttributeValueException {
+    public ResponseEntity<PersonsCoveredByFirestationDto> getPersonCoveredByFirestation(@RequestParam int stationNumber) {
         PersonsCoveredByFirestationDto personCoveredByFirestation = fireStationService.getPersonCoveredByFirestation(stationNumber);
         logger.info(MessageFormat.format("{0} persons found", personCoveredByFirestation.getPersonsBasicInfosDtoList().size()));
         return new ResponseEntity<>(personCoveredByFirestation, HttpStatusCode.valueOf(200));

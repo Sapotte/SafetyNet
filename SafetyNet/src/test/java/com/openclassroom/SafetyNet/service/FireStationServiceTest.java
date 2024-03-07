@@ -9,6 +9,7 @@ import com.openclassroom.SafetyNet.model.FireStation;
 import com.openclassroom.SafetyNet.model.Medicalrecord;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
+import com.openclassroom.SafetyNet.utils.errors.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,7 +64,7 @@ class FireStationServiceTest {
     }
 
     @Test
-    void updateFireStationOk() {
+    void updateFireStationOk() throws NotFoundException {
 
         fireStationService.updateFireStation(FIRESTATION_ADDRESS, FIRESTATION_ID);
 
@@ -72,8 +73,7 @@ class FireStationServiceTest {
 
     @Test
     void updateFireStationByWrongAddressKo() {
-        assertThrows(NullPointerException.class, () -> fireStationService.updateFireStation(FIRESTATION_WRONG_ADDRESS, FIRESTATION_ID));
-        verify(fireStationRepository, times(0)).updateFirestation(anyInt(), anyString());
+        assertThrows(NotFoundException.class, () -> fireStationService.updateFireStation(FIRESTATION_WRONG_ADDRESS, FIRESTATION_ID));
     }
 
     @Test
@@ -133,10 +133,15 @@ class FireStationServiceTest {
 
     @Test
     void getAddressesAndResidentsOk() {
+        when(personService.getPersonsByAddresses(anyList())).thenReturn(personsAtAddress);
+        when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(medicalrecordList1);
+        when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(medicalrecordList2);
+
         Map<String, Map<String, List<PersonInfoExtendsDto>>> result = fireStationService.getAddressesAndTheirResidentsCoveredByStations(List.of(FIRESTATION_ID));
 
         assertTrue(result.get(FIRESTATION_ID).containsKey(FIRESTATION_ADDRESS));
         assertEquals(FIRST_NAME, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getFirstName());
+        assertEquals(LAST_NAME, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getLastName());
         assertEquals(MEDICATIONS, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getMedications()) ;
         assertEquals(List.of(), result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getAllergies());
     }

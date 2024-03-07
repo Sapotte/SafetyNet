@@ -8,6 +8,7 @@ import com.openclassroom.SafetyNet.model.FireStation;
 import com.openclassroom.SafetyNet.model.Medicalrecord;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
+import com.openclassroom.SafetyNet.utils.errors.NotFoundException;
 import com.openclassroom.SafetyNet.utils.helper.AgeHelper;
 import com.openclassroom.SafetyNet.utils.mapper.PersonsCoveredByFirestationMapper;
 import com.openclassroom.SafetyNet.utils.mapper.PersonsCoveredByFirestationMapperImpl;
@@ -45,15 +46,15 @@ public class FireStationService {
         return fireStationRepository.saveFirestation(newFirestation);
     }
 
-    public void updateFireStation(String address, String station) {
-        var firstationToUpdate = IntStream.range(0, datas.getFireStations().size()).filter(i -> datas.getFireStations().get(i).getAddress().equals(address)).findFirst();
-        if (firstationToUpdate.isPresent()) {
-            logger.debug(MessageFormat.format("Firestation at {0} to be updated", firstationToUpdate.getAsInt()));
-            fireStationRepository.updateFirestation(firstationToUpdate.getAsInt(), station);
-        } else {
-            logger.error("No station found");
-            throw new NullPointerException(MessageFormat.format("No station found at the address {0}", address));
-        }
+    public void updateFireStation(String address, String station) throws NotFoundException {
+            var firstationToUpdate = IntStream.range(0, datas.getFireStations().size()).filter(i -> datas.getFireStations().get(i).getAddress().equals(address)).findFirst();
+            if (firstationToUpdate.isPresent()) {
+                logger.debug(MessageFormat.format("Firestation at {0} to be updated", firstationToUpdate.getAsInt()));
+                fireStationRepository.updateFirestation(firstationToUpdate.getAsInt(), station);
+            } else {
+                logger.error("No station found");
+                throw new NotFoundException(MessageFormat.format("No station found at the address {0}", address));
+            }
     }
 
     public void deleteFirestationByAddress(String address) throws ClassNotFoundException {
