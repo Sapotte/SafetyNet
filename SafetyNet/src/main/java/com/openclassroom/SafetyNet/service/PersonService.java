@@ -1,13 +1,17 @@
 package com.openclassroom.SafetyNet.service;
 
 import com.openclassroom.SafetyNet.dto.ChildInfoDto;
+import com.openclassroom.SafetyNet.dto.PersonInfoExtendsMailDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.PersonRepository;
+import com.openclassroom.SafetyNet.utils.errors.NotFoundException;
 import com.openclassroom.SafetyNet.utils.helper.AgeHelper;
 import com.openclassroom.SafetyNet.utils.helper.PatternHelper;
 import com.openclassroom.SafetyNet.utils.mapper.ChildInfoMapper;
 import com.openclassroom.SafetyNet.utils.mapper.ChildInfoMapperImpl;
+import com.openclassroom.SafetyNet.utils.mapper.PersonsInfoExtendsMapper;
+import com.openclassroom.SafetyNet.utils.mapper.PersonsInfoExtendsMapperImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +34,12 @@ public class PersonService {
     @Autowired
     Datas datas;
     @Autowired
+    MedicalrecordService medicalrecordService;
+    @Autowired
     PatternHelper patternHelper;
 
     ChildInfoMapper childInfoMapper = new ChildInfoMapperImpl();
+    PersonsInfoExtendsMapper personsInfoExtendsMapper = new PersonsInfoExtendsMapperImpl();
 
     public void addPerson(Person newPerson) throws InvalidAttributeValueException {
         patternHelper.checkIsValidPerson(newPerson);
@@ -76,30 +83,61 @@ public class PersonService {
         }
     }
 
+    public List<Person> getPersonsByAddresses(List<String> addresses) {
+        return datas.getPersons().stream().filter(person -> addresses.contains(person.getAddress())).collect(Collectors.toList());
+    }
+
+    public List<Person> getPersonsByNames(String firstName, String lastName) {
+        return datas.getPersons().stream().filter(person -> firstName.equals(person.getFirstName()) && lastName.equals(person.getLastName())).collect(Collectors.toList());
+    }
+
     public List<ChildInfoDto> getChildsByAddress(String address) {
-        List<ChildInfoDto> childsInfoByAddress = new ArrayList<>();
-        List<Person> personsAtAddress = datas.getPersons().stream().filter(person -> address.equals(person.getAddress())).collect(Collectors.toList());
-        Map<Person, Integer> childsAtAddress = new HashMap<>();
+        List<ChildInfoDto> childrenInfoByAddress = new ArrayList<>();
+        Map<Person, Integer> childrenAtAddress = new HashMap<>();
         List<Person> adultsAtAddress = new ArrayList<>();
-        for(Person person : personsAtAddress) {
-            String birthDate = datas.getMedicalRecords()
-                    .stream()
-                    .filter(record -> person.getFirstName().equals(record.getFirstName()) && person.getLastName().equals(record.getLastName()))
-                    .toList()
-                    .get(0)
-                    .getBirthdate();
-            if(AgeHelper.INSTANCE.isAdult(birthDate)) {
-                adultsAtAddress.add(person);
-            }else {
-                childsAtAddress.put(person, AgeHelper.INSTANCE.getAge(birthDate));
-            }
+        logger.debug("Fetch persons and medicalrecords");
+        for(Person person : getPersonsByAddresses(List.of(address))) {
+            medicalrecordService.getMedicalrecordsByName(person.getFirstName(), person.getLastName()).forEach(medicalrecord -> {
+                if(AgeHelper.INSTANCE.isAdult(medicalrecord.getBirthdate())) {
+                    adultsAtAddress.add(person);
+                }else {
+                    childrenAtAddress.put(person, AgeHelper.INSTANCE.getAge(medicalrecord.getBirthdate()));
+                }
+            });
         }
-        logger.info("Persons at the address retrieved");
-        for (Map.Entry<Person, Integer> child : childsAtAddress.entrySet()) {
+        for (Map.Entry<Person, Integer> child : childrenAtAddress.entrySet()) {
             List<Person> familyMembers = adultsAtAddress.stream().filter(adult -> child.getKey().getLastName().equals(adult.getLastName())).collect(Collectors.toList());
-            childsInfoByAddress.add(childInfoMapper.mapChildInfoFromPersonAgeAndFamilyMemberList(child.getKey(), child.getValue(), familyMembers));
+            childrenInfoByAddress.add(childInfoMapper.mapChildInfoFromPersonAgeAndFamilyMemberList(child.getKey(), child.getValue(), familyMembers));
         }
-        logger.info("Childs'info successfully retrieved");
-        return childsInfoByAddress;
+        logger.info("Children's info successfully retrieved");
+        return childrenInfoByAddress;
+    }
+
+    public List<PersonInfoExtendsMailDto> getPersonInfoExtendsByFirstAndLastName(String firstName, String lastName) {
+        List<PersonInfoExtendsMailDto> personInfoExtendsDtoList = new ArrayList<>();
+        try{
+            List<Person> personsList= getPersonsByNames(firstName, lastName);
+            if(!personsList.isEmpty()) {
+                logger.info("Get medicalrecords");
+                for (Person person : getPersonsByNames(firstName, lastName)) {
+                    medicalrecordService.getMedicalrecordsByName(firstName, lastName).forEach(medicalrecord -> {
+                        if(medicalrecord == null) {
+                            personInfoExtendsDtoList.add(personsInfoExtendsMapper.mapPersonAndMedicalRecordToPersonsInfoExtendsMailDto(person, null, null));
+                        } else {
+                            personInfoExtendsDtoList.add(personsInfoExtendsMapper.mapPersonAndMedicalRecordToPersonsInfoExtendsMailDto(person, medicalrecord, AgeHelper.INSTANCE.getAge(medicalrecord.getBirthdate())));
+                        }
+                    });
+                }
+            } else {
+                throw  new NotFoundException("No person found");
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return personInfoExtendsDtoList ;
+    }
+
+    public List<String> getMailsByCity(String city) {
+        return datas.getPersons().stream().filter(person -> city.equals(person.getCity())).map(Person::getEmail).collect(Collectors.toList());
     }
 }

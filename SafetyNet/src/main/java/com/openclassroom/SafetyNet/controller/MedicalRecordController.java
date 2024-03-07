@@ -1,7 +1,7 @@
 package com.openclassroom.SafetyNet.controller;
 
 import com.openclassroom.SafetyNet.model.Medicalrecord;
-import com.openclassroom.SafetyNet.service.MedicalRecordService;
+import com.openclassroom.SafetyNet.service.MedicalrecordService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,10 +14,10 @@ import java.text.MessageFormat;
 @RestController
 @RequestMapping("medicalrecord")
 public class MedicalRecordController {
-    private final Logger logger = LogManager.getLogger(MedicalRecordService.class);
+    private final Logger logger = LogManager.getLogger(MedicalrecordService.class);
 
     @Autowired
-    private MedicalRecordService medicalRecordService;
+    private MedicalrecordService medicalRecordService;
 
     @PostMapping
     @Operation(summary = "Add a medical record")

@@ -2,6 +2,7 @@ package com.openclassroom.SafetyNet.controller;
 
 import com.openclassroom.SafetyNet.dto.ChildInfoDto;
 import com.openclassroom.SafetyNet.dto.PersonInfoExtendsDto;
+import com.openclassroom.SafetyNet.dto.PersonInfoExtendsMailDto;
 import com.openclassroom.SafetyNet.dto.PersonsByAddressDto;
 import com.openclassroom.SafetyNet.service.FireStationService;
 import com.openclassroom.SafetyNet.service.PersonService;
@@ -70,4 +71,23 @@ public class AlertsController {
         return new ResponseEntity<>(addressesAndResidents, HttpStatusCode.valueOf(200));
     }
 
+    @GetMapping("/personInfo")
+    @Operation(summary = "Get infos for resident by firstName and lastName ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Persons found successfully")
+    })
+    public ResponseEntity<List<PersonInfoExtendsMailDto>> getPersonInfos(@RequestParam String firstName, @RequestParam String lastName) {
+        List<PersonInfoExtendsMailDto> personsInfo = personService.getPersonInfoExtendsByFirstAndLastName(firstName,lastName);
+        return new ResponseEntity<>(personsInfo, HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping("/communityEmail")
+    @Operation(summary = "Get all mail addresses city's residents")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Mails found successfully")
+    })
+    public ResponseEntity<List<String>> getMailsByCity(@RequestParam String city) {
+        List<String> mailsList = personService.getMailsByCity(city);
+        return new ResponseEntity<>(mailsList, HttpStatusCode.valueOf(200));
+    }
 }

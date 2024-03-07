@@ -2,6 +2,7 @@ package com.openclassroom.SafetyNet.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassroom.SafetyNet.dto.ChildInfoDto;
+import com.openclassroom.SafetyNet.dto.PersonInfoExtendsMailDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.PersonRepository;
@@ -18,9 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static com.openclassroom.SafetyNet.utils.Constants.FIRESTATION_ADDRESS;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.openclassroom.SafetyNet.utils.Constants.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -32,6 +32,8 @@ public class PersonServiceTest {
     PersonRepository personRepository;
     @Mock
     Datas datas;
+    @Mock
+    MedicalrecordService medicalrecordService;
     @Mock
     PatternHelper patternHelper;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -93,11 +95,46 @@ public class PersonServiceTest {
         assertThrows(InvalidAttributeValueException.class, () -> personService.deletePerson(datas.getPersons().get(0).getFirstName(), datas.getPersons().get(0).getFirstName()));
         verify(personRepository, times(0)).deletePerson(anyInt());
     }
+
+    @Test
+    void getPersonByAddressOk() {
+        var result = personService.getPersonsByAddresses(List.of(FIRESTATION_ADDRESS));
+
+        assertEquals(result, List.of(datas.getPersons().getFirst(), datas.getPersons().get(1)));
+    }
+    @Test
+    void getPersonByNamesOk() {
+        var result = personService.getPersonsByNames(FIRST_NAME, LAST_NAME);
+
+        assertEquals(result, List.of(datas.getPersons().getFirst()));
+    }
     @Test
     void getChildsByAddressOk() {
+        when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(List.of(datas.getMedicalRecords().getFirst()));
+        when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(List.of(datas.getMedicalRecords().get(1)));
         List<ChildInfoDto> result = personService.getChildsByAddress(FIRESTATION_ADDRESS);
 
-        assertTrue(result.size() == 1);
-        assertTrue(result.getFirst().getFamilyMembers().size() == 1);
+        assertEquals(1, result.size());
+        assertEquals(1, result.getFirst().getFamilyMembers().size());
+    }
+
+    @Test
+    void getPersonInfoOk() {
+        when(medicalrecordService.getMedicalrecordsByName(anyString(), anyString())).thenReturn(List.of(datas.getMedicalRecords().getFirst()));
+        List<PersonInfoExtendsMailDto> result = personService.getPersonInfoExtendsByFirstAndLastName(FIRST_NAME, LAST_NAME);
+
+        assertEquals(1, result.size());
+        assertEquals(result.getFirst().getEmail(), MAIL_ADDRESS);
+        assertEquals(result.getFirst().getMedications(), MEDICATIONS);
+        assertEquals(result.getFirst().getAllergies(), List.of());
+    }
+
+    @Test
+    void getMailsByCity() {
+        List<String> result = personService.getMailsByCity(CITY);
+
+        assertEquals(2, result.size());
+        assertEquals(result.getFirst(), MAIL_ADDRESS);
+        assertEquals(result.get(1), MAIL_ADDRESS_2);
     }
 }

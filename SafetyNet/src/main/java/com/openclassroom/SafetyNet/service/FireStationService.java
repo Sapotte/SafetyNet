@@ -29,6 +29,10 @@ public class FireStationService {
     @Autowired
     FireStationRepository fireStationRepository;
     @Autowired
+    MedicalrecordService medicalrecordService;
+    @Autowired
+    PersonService personService;
+    @Autowired
     Datas datas;
     PersonsInfoExtendsMapper personsInfoExtendsMapper = new PersonsInfoExtendsMapperImpl();
     PersonsCoveredByFirestationMapper personsCoveredByFirestationMapper = new PersonsCoveredByFirestationMapperImpl();
@@ -67,24 +71,15 @@ public class FireStationService {
 
     public PersonsCoveredByFirestationDto getPersonCoveredByFirestation(Integer stationNumber) {
         List<String> addressesCoveredByStation = getAddressesCoveredByFirestation(stationNumber.toString());
-
+        logger.debug(MessageFormat.format("{0} addresses found for station {1}", addressesCoveredByStation.size(), stationNumber));
         if (!addressesCoveredByStation.isEmpty()) {
-            List<Person> personCoveredByFirestation = datas.getPersons()
-                    .stream()
-                    .filter(person -> addressesCoveredByStation.contains(person.getAddress()))
-                    .collect(Collectors.toList());
-
+            List<Person> personCoveredByFirestation = personService.getPersonsByAddresses(addressesCoveredByStation);
+            logger.debug(MessageFormat.format("{0} persons covered by station {1}", personCoveredByFirestation.size(), stationNumber));
             List<String> birthDates = new ArrayList<>();
             for (Person person : personCoveredByFirestation) {
-                birthDates.addAll(datas.getMedicalRecords()
-                        .stream()
-                        .filter(record -> record.getFirstName().equals(person.getFirstName()) && record.getLastName().equals(person.getLastName()))
-                        .map(Medicalrecord::getBirthdate)
-                        .toList());
+                birthDates.addAll(medicalrecordService.getMedicalrecordsByName(person.getFirstName(), person.getLastName()).stream().map(Medicalrecord::getBirthdate).toList());
             }
-
             Map<String, Integer> adultChildCount = AgeHelper.INSTANCE.adultChildCount(birthDates);
-            logger.info("Persons found with success");
             return personsCoveredByFirestationMapper.mapPersonAndAdultChildCountToPersonCoveredByFirestation(personCoveredByFirestation, adultChildCount);
         } else {
             throw new NoSuchElementException(MessageFormat.format("No address covered by stationNumber {0}", stationNumber));
@@ -93,13 +88,13 @@ public class FireStationService {
 
     public List<String> getPhoneNumbersByFirestation(String firestation) {
         List<String> addressesCoveredByStation = getAddressesCoveredByFirestation(firestation);
-        return datas.getPersons().stream().filter(person -> addressesCoveredByStation.contains(person.getAddress())).map(Person::getPhone).toList();
+        return personService.getPersonsByAddresses(addressesCoveredByStation).stream().map(Person::getPhone).toList();
     }
 
     /**
      * Get all the addresses covered by a firestation
      *
-     * @param stationNumber
+     * @param stationNumber the fireStation number
      * @return list of addresses covered by the firestation
      */
     private List<String> getAddressesCoveredByFirestation(String stationNumber) {
@@ -121,16 +116,11 @@ public class FireStationService {
 
     private List<PersonInfoExtendsDto> getPersonsInfoExtendsByAddress(String address) {
         List<PersonInfoExtendsDto> extendsInfoResidents = new ArrayList<>();
-        List<Person> personsAtAddress = datas.getPersons().stream().filter(person -> address.equals(person.getAddress())).collect(Collectors.toList());
+        List<Person> personsAtAddress = personService.getPersonsByAddresses(List.of(address));
         for (Person resident : personsAtAddress) {
-            Optional<Medicalrecord> medicalRecord = datas.getMedicalRecords()
-                    .stream()
-                    .filter(record -> resident.getLastName().equals(record.getLastName()) && resident.getFirstName()
-                            .equals(record.getFirstName()))
-                    .findFirst();
-            if (medicalRecord.isPresent()) {
-                extendsInfoResidents.add(personsInfoExtendsMapper.mapPersonAndMedicalRecordToPersonsInfoExtends(resident, medicalRecord.get(), AgeHelper.INSTANCE.getAge(medicalRecord.get().getBirthdate())));
-            }
+            medicalrecordService.getMedicalrecordsByName(resident.getFirstName(), resident.getLastName()).forEach(medicalrecord ->
+                extendsInfoResidents.add(personsInfoExtendsMapper.mapPersonAndMedicalRecordToPersonsInfoExtends(resident, medicalrecord, AgeHelper.INSTANCE.getAge(medicalrecord.getBirthdate())))
+            );
         }
         return extendsInfoResidents;
     }
@@ -143,7 +133,7 @@ public class FireStationService {
                     .stream()
                     .filter(stationItem -> stationItem.getStation().equals(station))
                     .map(FireStation::getAddress)
-                    .collect(Collectors.toList());
+                    .toList();
 
             for(String address: addressesCoveredByStation) {
                 personsByAddress.put(address, getPersonsInfoExtendsByAddress(address));

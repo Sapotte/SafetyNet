@@ -28,7 +28,7 @@
   "persons":[
     {
       "address":"1 Abc St",
-      "city":"Culver",
+      "city":"newCity",
       "email":"jane.doe@email.com",
       "firstName":"Jane",
       "lastName":"DoeStation1",
@@ -46,7 +46,7 @@
     },
     {
       "address":"6 Mno S",
-      "city":"Culver",
+      "city":"newCity",
       "email":"johnDoeStation3@email.com",
       "firstName":"John",
       "lastName":"DoeStation3",

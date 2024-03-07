@@ -21,12 +21,4 @@ public class PersonsByAddressDto {
     public void setPersonInfoExtendsDtoList(List<PersonInfoExtendsDto> personInfoExtendsDtoList) {
         this.personInfoExtendsDtoList = personInfoExtendsDtoList;
     }
-
-    @Override
-    public String toString() {
-        return "PersonsByAddressDto{" +
-                "station='" + station + '\'' +
-                ", personInfoExtendsDtoList=" + personInfoExtendsDtoList +
-                '}';
-    }
 }

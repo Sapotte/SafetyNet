@@ -3,6 +3,7 @@ package com.openclassroom.SafetyNet.service;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Medicalrecord;
 import com.openclassroom.SafetyNet.repositories.models.MedicalRecordRepository;
+import com.openclassroom.SafetyNet.utils.errors.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,13 @@ import org.springframework.stereotype.Service;
 
 import javax.management.InvalidAttributeValueException;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.stream.IntStream;
 
 
 @Service
-public class MedicalRecordService {
-    private final Logger logger = LogManager.getLogger(MedicalRecordService.class);
+public class MedicalrecordService {
+    private final Logger logger = LogManager.getLogger(MedicalrecordService.class);
     @Autowired
     Datas datas;
     @Autowired
@@ -57,6 +59,20 @@ public class MedicalRecordService {
         } else {
             logger.error("Invalid number of matches in the list for this person");
             throw new InvalidAttributeValueException(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), firstName, lastName));
+        }
+    }
+
+    public List<Medicalrecord> getMedicalrecordsByName(String firstName, String lastName) {
+        List<Medicalrecord> medicalrecordList = datas.getMedicalRecords().stream().filter(medicalrecord -> firstName.equals(medicalrecord.getFirstName()) && lastName.equals(medicalrecord.getLastName())).toList();
+        try {
+            if(medicalrecordList.isEmpty()) {
+                throw new NotFoundException(MessageFormat.format("No medicalrecord found for {0} {1}", firstName, lastName));
+            } else {
+                return medicalrecordList;
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return null;
         }
     }
 }

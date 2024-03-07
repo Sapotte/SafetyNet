@@ -2,7 +2,7 @@ package com.openclassroom.SafetyNet.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassroom.SafetyNet.model.Medicalrecord;
-import com.openclassroom.SafetyNet.service.MedicalRecordService;
+import com.openclassroom.SafetyNet.service.MedicalrecordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ public class MedicalRecordControllerTest {
     MedicalRecordController medicalRecordController;
 
     @Mock
-    MedicalRecordService medicalRecordService;
+    MedicalrecordService medicalRecordService;
     Medicalrecord medicalrecord;
     private final ObjectMapper mapper = new ObjectMapper();
 

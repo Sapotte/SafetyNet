@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class MedicalrecordServiceTest {
     @InjectMocks
-    MedicalRecordService medicalRecordService;
+    MedicalrecordService medicalRecordService;
     @Mock
     MedicalRecordRepository medicalRecordRepository;
     @Mock

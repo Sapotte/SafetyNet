@@ -31,13 +31,4 @@ public class PersonsCoveredByFirestationDto {
     public void setPersonsBasicInfosDtoList(List<PersonsBasicInfosDto> personsBasicInfosDtoList) {
         this.personsBasicInfosDtoList = personsBasicInfosDtoList;
     }
-
-    @Override
-    public String toString() {
-        return "PersonsCoveredByFirestationDto{" +
-                "adultsCount=" + adultsCount +
-                ", childsCount=" + childsCount +
-                ", personsBasicInfosDtoList=" + personsBasicInfosDtoList +
-                '}';
-    }
 }

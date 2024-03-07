@@ -6,6 +6,8 @@ import com.openclassroom.SafetyNet.dto.PersonsByAddressDto;
 import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestationDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.FireStation;
+import com.openclassroom.SafetyNet.model.Medicalrecord;
+import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.FireStationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.management.InvalidAttributeValueException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -24,8 +25,7 @@ import java.util.NoSuchElementException;
 import static com.openclassroom.SafetyNet.utils.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class FireStationServiceTest {
@@ -33,18 +33,27 @@ class FireStationServiceTest {
     FireStationService fireStationService;
     @Mock
     FireStationRepository fireStationRepository;
+    @Mock
+    PersonService personService;
+    @Mock
+    MedicalrecordService medicalrecordService;
 
     @Mock
     Datas datas;
+
+    private List<Person> personsAtAddress;
+    private List<Medicalrecord> medicalrecordList1;
+    private List<Medicalrecord> medicalrecordList2;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() throws IOException {
         datas = mapper.readValue(new File("src/test/java/com/openclassroom/SafetyNet/utils/datas/DatasTest.json"), Datas.class);
-
         fireStationService.datas = datas;
-
+        personsAtAddress = List.of(datas.getPersons().get(0), datas.getPersons().get(1));
+        medicalrecordList1 = List.of(datas.getMedicalRecords().get(0));
+        medicalrecordList2 = List.of(datas.getMedicalRecords().get(2));
     }
     @Test
     void addFireStationOk() {
@@ -83,29 +92,37 @@ class FireStationServiceTest {
     }
 
     @Test
-    void getPersonsCoveredByFirestationOk() throws InvalidAttributeValueException {
+    void getPersonsCoveredByFirestationOk() {
+        when(personService.getPersonsByAddresses(anyList())).thenReturn(personsAtAddress);
+        when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(medicalrecordList1);
+        when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(medicalrecordList2);
         PersonsCoveredByFirestationDto result = fireStationService.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_ID));
 
-        assertTrue(result.getAdultsCount() == 1);
-        assertTrue(result.getChildsCount() == 1);
-        assertTrue(result.getPersonsBasicInfosDtoList().size() == 2);
+        assertEquals(1, result.getAdultsCount());
+        assertEquals(1, result.getChildsCount());
+        assertEquals(2, result.getPersonsBasicInfosDtoList().size());
     }
 
     @Test
-    void getPersonsCoveredByFirestationNoStationFound() throws InvalidAttributeValueException {
+    void getPersonsCoveredByFirestationNoStationFound() {
 
         assertThrows(NoSuchElementException.class, () -> fireStationService.getPersonCoveredByFirestation(Integer.parseInt(FIRESTATION_WRONG_ID)));
 
     }
     @Test
     void getPhoneNumbersByFirestationOk() {
+        when(personService.getPersonsByAddresses(anyList())).thenReturn(personsAtAddress);
+
         List<String> result = fireStationService.getPhoneNumbersByFirestation(FIRESTATION_ID);
 
-        assertTrue(result.size() == 2);
+        assertEquals(2, result.size());
     }
 
     @Test
     void getPersonsByAddressOk() {
+        when(personService.getPersonsByAddresses(anyList())).thenReturn(personsAtAddress);
+        when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(medicalrecordList1);
+        when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(medicalrecordList2);
         PersonsByAddressDto result = fireStationService.getPersonsByAddress(FIRESTATION_ADDRESS);
 
         assertEquals(FIRESTATION_ID, result.getStation());
@@ -115,10 +132,10 @@ class FireStationServiceTest {
     }
 
     @Test
-    void getAddressesAndReididentsOk() {
+    void getAddressesAndResidentsOk() {
         Map<String, Map<String, List<PersonInfoExtendsDto>>> result = fireStationService.getAddressesAndTheirResidentsCoveredByStations(List.of(FIRESTATION_ID));
 
-        assertTrue(result.get(FIRESTATION_ID).keySet().contains(FIRESTATION_ADDRESS));
+        assertTrue(result.get(FIRESTATION_ID).containsKey(FIRESTATION_ADDRESS));
         assertEquals(FIRST_NAME, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getFirstName());
         assertEquals(MEDICATIONS, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getMedications()) ;
         assertEquals(List.of(), result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getAllergies());

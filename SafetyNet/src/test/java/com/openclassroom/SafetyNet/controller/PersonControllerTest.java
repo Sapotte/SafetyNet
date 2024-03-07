@@ -51,4 +51,5 @@ public class PersonControllerTest {
 
         verify(personService, times(1)).deletePerson(newPerson.getFirstName(), newPerson.getLastName());
     }
+
 }
