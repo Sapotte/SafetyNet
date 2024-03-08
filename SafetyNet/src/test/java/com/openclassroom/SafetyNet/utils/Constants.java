@@ -11,6 +11,7 @@ public class Constants {
     public static final String FIRESTATION_ADDRESS = "1 Abc St";
     public static final String MAIL_ADDRESS = "jane.doe@email.com";
     public static final String MAIL_ADDRESS_2 = "johnDoeStation3@email.com";
+    public static final String PHONE_NUMBER = "841-874-7784";
 
     public static final String LAST_NAME = "DoeStation1";
     public static final String FIRST_NAME = "Jane";

@@ -15,7 +15,6 @@ import java.util.Collections;
 
 import static com.openclassroom.SafetyNet.utils.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -42,8 +41,12 @@ class FireStationControllerTest {
     }
 
     @Test
-    void updateFirestationNotFoundKo() {
-        assertThrows(NotFoundException.class, () ->fireStationController.updateFireStationNumber(FIRESTATION_WRONG_ADDRESS, FIRESTATION_ID));
+    void updateFirestationNotFoundKo() throws NotFoundException {
+        doThrow(NotFoundException.class).when(fireStationService).updateFireStation(anyString(), anyString());
+
+        var response  = fireStationController.updateFireStationNumber(FIRESTATION_WRONG_ADDRESS, FIRESTATION_ID);
+
+        assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(404));
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Medicalrecord;
 import com.openclassroom.SafetyNet.repositories.models.MedicalRecordRepository;
+import com.openclassroom.SafetyNet.utils.errors.InvalidNumberOfMatches;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +55,7 @@ public class MedicalrecordServiceTest {
         verify(medicalRecordRepository, times(0)).saveMedicalRecord(any(Medicalrecord.class));
     }
     @Test
-    void updateMedicalRecordOk() throws InvalidAttributeValueException {
+    void updateMedicalRecordOk() throws InvalidNumberOfMatches {
         Medicalrecord newMedicalRecord = datas.getMedicalRecords().get(0);
         newMedicalRecord.setBirthdate("01/01/1990");
         newMedicalRecord.setAllergies(List.of("allergy1", "allergy2"));
@@ -67,11 +68,11 @@ public class MedicalrecordServiceTest {
 
     @Test
     void updateMedicalRecordNotFoundKo() {
-        assertThrows(InvalidAttributeValueException.class, () -> medicalRecordService.updateMedicalRecord(medicalrecord));
+        assertThrows(InvalidNumberOfMatches.class, () -> medicalRecordService.updateMedicalRecord(medicalrecord));
         verify(medicalRecordRepository, times(0)).updateMedicalRecord(anyInt(), any(Medicalrecord.class));
     }
     @Test
-    void deleteMedicalRecordOk() throws InvalidAttributeValueException {
+    void deleteMedicalRecordOk() throws InvalidNumberOfMatches {
         Medicalrecord medicalrecordToDelete = datas.getMedicalRecords().getFirst();
         medicalRecordService.deleteMedicalRecord(medicalrecordToDelete.getFirstName(), medicalrecordToDelete.getLastName());
 
@@ -80,7 +81,7 @@ public class MedicalrecordServiceTest {
 
     @Test
     void deleteMedicalRecordNotFoundKo() {
-        assertThrows(InvalidAttributeValueException.class, () -> medicalRecordService.deleteMedicalRecord(medicalrecord.getFirstName(), medicalrecord.getLastName()));
+        assertThrows(InvalidNumberOfMatches.class, () -> medicalRecordService.deleteMedicalRecord(medicalrecord.getFirstName(), medicalrecord.getLastName()));
         verify(medicalRecordRepository, times(0)).deleteMedicalRecord(anyInt());
     }
 }

@@ -3,6 +3,7 @@ package com.openclassroom.SafetyNet.service;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Medicalrecord;
 import com.openclassroom.SafetyNet.repositories.models.MedicalRecordRepository;
+import com.openclassroom.SafetyNet.utils.errors.InvalidNumberOfMatches;
 import com.openclassroom.SafetyNet.utils.errors.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +33,7 @@ public class MedicalrecordService {
         medicalRecordRepository.saveMedicalRecord(medicalrecord);
     }
 
-    public void updateMedicalRecord(Medicalrecord medicalrecord) throws InvalidAttributeValueException {
+    public void updateMedicalRecord(Medicalrecord medicalrecord) throws InvalidNumberOfMatches {
         // Find the index of the person to be updated
         var indexList = IntStream.range(0, datas.getMedicalRecords().size())
                 .filter(i -> datas.getMedicalRecords().get(i).getFirstName().equals(medicalrecord.getFirstName()) && datas.getMedicalRecords().get(i).getLastName().equals(medicalrecord.getLastName()))
@@ -43,11 +44,11 @@ public class MedicalrecordService {
             medicalRecordRepository.updateMedicalRecord(indexList.getFirst(), medicalrecord);
         } else {
             logger.error("Invalid number of matches in the list for this medicalrecord");
-            throw new InvalidAttributeValueException(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), medicalrecord.getFirstName(), medicalrecord.getLastName()));
+            throw new InvalidNumberOfMatches(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), medicalrecord.getFirstName(), medicalrecord.getLastName()));
         }
     }
 
-    public void deleteMedicalRecord(String firstName, String lastName) throws InvalidAttributeValueException {
+    public void deleteMedicalRecord(String firstName, String lastName) throws InvalidNumberOfMatches {
         // Find the index of the person to be deleted
         var indexList = IntStream.range(0, datas.getPersons().size())
                 .filter(i -> datas.getMedicalRecords().get(i).getFirstName().equals(firstName) && datas.getMedicalRecords().get(i).getLastName().equals(lastName))
@@ -58,7 +59,7 @@ public class MedicalrecordService {
             medicalRecordRepository.deleteMedicalRecord(indexList.getFirst());
         } else {
             logger.error("Invalid number of matches in the list for this person");
-            throw new InvalidAttributeValueException(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), firstName, lastName));
+            throw new InvalidNumberOfMatches(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), firstName, lastName));
         }
     }
 

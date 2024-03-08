@@ -101,6 +101,10 @@ class FireStationServiceTest {
         assertEquals(1, result.getAdultsCount());
         assertEquals(1, result.getChildsCount());
         assertEquals(2, result.getPersonsBasicInfosDtoList().size());
+        assertEquals(FIRST_NAME, result.getPersonsBasicInfosDtoList().getFirst().getFirstName());
+        assertEquals(LAST_NAME, result.getPersonsBasicInfosDtoList().getFirst().getLastName());
+        assertEquals(FIRESTATION_ADDRESS, result.getPersonsBasicInfosDtoList().getFirst().getAddress());
+        assertEquals(PHONE_NUMBER, result.getPersonsBasicInfosDtoList().getFirst().getPhoneNumber());
     }
 
     @Test

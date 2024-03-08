@@ -3,19 +3,21 @@ package com.openclassroom.SafetyNet.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassroom.SafetyNet.model.Medicalrecord;
 import com.openclassroom.SafetyNet.service.MedicalrecordService;
+import com.openclassroom.SafetyNet.utils.errors.InvalidNumberOfMatches;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatusCode;
 
 import javax.management.InvalidAttributeValueException;
 import java.io.File;
 import java.io.IOException;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MedicalRecordControllerTest {
@@ -41,10 +43,18 @@ public class MedicalRecordControllerTest {
     }
 
     @Test
-    void updateMedicalrecordOk() throws InvalidAttributeValueException {
+    void updateMedicalrecordOk() throws InvalidNumberOfMatches {
         medicalRecordController.updateMedicalRecord(medicalrecord);
 
         verify(medicalRecordService, times(1)).updateMedicalRecord(medicalrecord);
+    }
+
+    @Test
+    void updateMedicalRecordError() throws InvalidNumberOfMatches {
+        doThrow(InvalidNumberOfMatches.class).when(medicalRecordService).updateMedicalRecord(any(Medicalrecord.class));
+                var response = medicalRecordController.updateMedicalRecord(medicalrecord);
+
+        assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(404));
     }
 
     @Test
