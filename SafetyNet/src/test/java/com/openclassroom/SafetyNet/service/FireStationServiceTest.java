@@ -92,7 +92,7 @@ class FireStationServiceTest {
     }
 
     @Test
-    void getPersonsCoveredByFirestationOk() {
+    void getPersonsCoveredByFirestationOk() throws NotFoundException {
         when(personService.getPersonsByAddresses(anyList())).thenReturn(personsAtAddress);
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(medicalrecordList1);
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(medicalrecordList2);
@@ -123,7 +123,7 @@ class FireStationServiceTest {
     }
 
     @Test
-    void getPersonsByAddressOk() {
+    void getPersonsByAddressOk() throws NotFoundException {
         when(personService.getPersonsByAddresses(anyList())).thenReturn(personsAtAddress);
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(medicalrecordList1);
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(medicalrecordList2);
@@ -136,7 +136,7 @@ class FireStationServiceTest {
     }
 
     @Test
-    void getAddressesAndResidentsOk() {
+    void getAddressesAndResidentsOk() throws NotFoundException {
         when(personService.getPersonsByAddresses(anyList())).thenReturn(personsAtAddress);
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(medicalrecordList1);
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(medicalrecordList2);

@@ -63,17 +63,12 @@ public class MedicalrecordService {
         }
     }
 
-    public List<Medicalrecord> getMedicalrecordsByName(String firstName, String lastName) {
+    public List<Medicalrecord> getMedicalrecordsByName(String firstName, String lastName) throws NotFoundException {
         List<Medicalrecord> medicalrecordList = datas.getMedicalRecords().stream().filter(medicalrecord -> firstName.equals(medicalrecord.getFirstName()) && lastName.equals(medicalrecord.getLastName())).toList();
-        try {
             if(medicalrecordList.isEmpty()) {
                 throw new NotFoundException(MessageFormat.format("No medicalrecord found for {0} {1}", firstName, lastName));
             } else {
                 return medicalrecordList;
             }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return null;
-        }
     }
 }

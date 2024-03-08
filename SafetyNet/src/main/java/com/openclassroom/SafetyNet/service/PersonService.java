@@ -97,13 +97,17 @@ public class PersonService {
         List<Person> adultsAtAddress = new ArrayList<>();
         logger.debug("Fetch persons and medicalrecords");
         for(Person person : getPersonsByAddresses(List.of(address))) {
-            medicalrecordService.getMedicalrecordsByName(person.getFirstName(), person.getLastName()).forEach(medicalrecord -> {
-                if(AgeHelper.INSTANCE.isAdult(medicalrecord.getBirthdate())) {
-                    adultsAtAddress.add(person);
-                }else {
-                    childrenAtAddress.put(person, AgeHelper.INSTANCE.getAge(medicalrecord.getBirthdate()));
-                }
-            });
+            try {
+                medicalrecordService.getMedicalrecordsByName(person.getFirstName(), person.getLastName()).forEach(medicalrecord -> {
+                    if (AgeHelper.INSTANCE.isAdult(medicalrecord.getBirthdate())) {
+                        adultsAtAddress.add(person);
+                    } else {
+                        childrenAtAddress.put(person, AgeHelper.INSTANCE.getAge(medicalrecord.getBirthdate()));
+                    }
+                });
+            } catch (Exception e) {
+                logger.error(MessageFormat.format("No medicalrecord found for {0} {1}", person.getFirstName(), person.getLastName()));
+            }
         }
         for (Map.Entry<Person, Integer> child : childrenAtAddress.entrySet()) {
             List<Person> familyMembers = adultsAtAddress.stream().filter(adult -> child.getKey().getLastName().equals(adult.getLastName())).collect(Collectors.toList());

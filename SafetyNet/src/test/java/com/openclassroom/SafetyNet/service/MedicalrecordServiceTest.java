@@ -84,4 +84,9 @@ public class MedicalrecordServiceTest {
         assertThrows(InvalidNumberOfMatches.class, () -> medicalRecordService.deleteMedicalRecord(medicalrecord.getFirstName(), medicalrecord.getLastName()));
         verify(medicalRecordRepository, times(0)).deleteMedicalRecord(anyInt());
     }
+    @Test
+    void getMedicalrecordsByNameOk() {
+        assertThrows(InvalidNumberOfMatches.class, () -> medicalRecordService.deleteMedicalRecord(medicalrecord.getFirstName(), medicalrecord.getLastName()));
+        verify(medicalRecordRepository, times(0)).deleteMedicalRecord(anyInt());
+    }
 }

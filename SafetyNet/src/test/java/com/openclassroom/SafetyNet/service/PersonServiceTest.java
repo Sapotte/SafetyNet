@@ -6,6 +6,7 @@ import com.openclassroom.SafetyNet.dto.PersonInfoExtendsMailDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.PersonRepository;
+import com.openclassroom.SafetyNet.utils.errors.NotFoundException;
 import com.openclassroom.SafetyNet.utils.helper.PatternHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -109,7 +110,7 @@ public class PersonServiceTest {
         assertEquals(result, List.of(datas.getPersons().getFirst()));
     }
     @Test
-    void getChildsByAddressOk() {
+    void getChildsByAddressOk() throws NotFoundException {
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(List.of(datas.getMedicalRecords().getFirst()));
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(List.of(datas.getMedicalRecords().get(1)));
         List<ChildInfoDto> result = personService.getChildsByAddress(FIRESTATION_ADDRESS);
@@ -119,7 +120,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    void getPersonInfoOk() {
+    void getPersonInfoOk() throws NotFoundException {
         when(medicalrecordService.getMedicalrecordsByName(anyString(), anyString())).thenReturn(List.of(datas.getMedicalRecords().getFirst()));
         List<PersonInfoExtendsMailDto> result = personService.getPersonInfoExtendsByFirstAndLastName(FIRST_NAME, LAST_NAME);
 

@@ -47,14 +47,14 @@ public class FireStationService {
     }
 
     public void updateFireStation(String address, String station) throws NotFoundException {
-            var firstationToUpdate = IntStream.range(0, datas.getFireStations().size()).filter(i -> datas.getFireStations().get(i).getAddress().equals(address)).findFirst();
-            if (firstationToUpdate.isPresent()) {
-                logger.debug(MessageFormat.format("Firestation at {0} to be updated", firstationToUpdate.getAsInt()));
-                fireStationRepository.updateFirestation(firstationToUpdate.getAsInt(), station);
-            } else {
-                logger.error("No station found");
-                throw new NotFoundException(MessageFormat.format("No station found at the address {0}", address));
-            }
+        var firstationToUpdate = IntStream.range(0, datas.getFireStations().size()).filter(i -> datas.getFireStations().get(i).getAddress().equals(address)).findFirst();
+        if (firstationToUpdate.isPresent()) {
+            logger.debug(MessageFormat.format("Firestation at {0} to be updated", firstationToUpdate.getAsInt()));
+            fireStationRepository.updateFirestation(firstationToUpdate.getAsInt(), station);
+        } else {
+            logger.error("No station found");
+            throw new NotFoundException(MessageFormat.format("No station found at the address {0}", address));
+        }
     }
 
     public void deleteFirestationByAddress(String address) throws ClassNotFoundException {
@@ -78,7 +78,11 @@ public class FireStationService {
             logger.debug(MessageFormat.format("{0} persons covered by station {1}", personCoveredByFirestation.size(), stationNumber));
             List<String> birthDates = new ArrayList<>();
             for (Person person : personCoveredByFirestation) {
-                birthDates.addAll(medicalrecordService.getMedicalrecordsByName(person.getFirstName(), person.getLastName()).stream().map(Medicalrecord::getBirthdate).toList());
+                try {
+                    birthDates.addAll(medicalrecordService.getMedicalrecordsByName(person.getFirstName(), person.getLastName()).stream().map(Medicalrecord::getBirthdate).toList());
+                } catch (Exception e) {
+                    logger.error(MessageFormat.format("No medicalrecord found for {0} {1}", person.getFirstName(), person.getLastName()));
+                }
             }
             Map<String, Integer> adultChildCount = AgeHelper.INSTANCE.adultChildCount(birthDates);
             return personsCoveredByFirestationMapper.mapPersonAndAdultChildCountToPersonCoveredByFirestation(personCoveredByFirestation, adultChildCount);
@@ -119,9 +123,14 @@ public class FireStationService {
         List<PersonInfoExtendsDto> extendsInfoResidents = new ArrayList<>();
         List<Person> personsAtAddress = personService.getPersonsByAddresses(List.of(address));
         for (Person resident : personsAtAddress) {
-            medicalrecordService.getMedicalrecordsByName(resident.getFirstName(), resident.getLastName()).forEach(medicalrecord ->
-                extendsInfoResidents.add(personsInfoExtendsMapper.mapPersonAndMedicalRecordToPersonsInfoExtends(resident, medicalrecord, AgeHelper.INSTANCE.getAge(medicalrecord.getBirthdate())))
-            );
+            try {
+                medicalrecordService.getMedicalrecordsByName(resident.getFirstName(), resident.getLastName()).forEach(medicalrecord ->
+                        extendsInfoResidents.add(personsInfoExtendsMapper.mapPersonAndMedicalRecordToPersonsInfoExtends(resident, medicalrecord, AgeHelper.INSTANCE.getAge(medicalrecord.getBirthdate())))
+                );
+            } catch (Exception e) {
+                logger.error(MessageFormat.format("No medicalrecord found for {0} {1}", resident.getFirstName(), resident.getLastName()));
+                extendsInfoResidents.add(personsInfoExtendsMapper.mapPersonAndMedicalRecordToPersonsInfoExtends(resident, null, null));
+            }
         }
         return extendsInfoResidents;
     }
@@ -129,17 +138,17 @@ public class FireStationService {
     public Map<String, Map<String, List<PersonInfoExtendsDto>>> getAddressesAndTheirResidentsCoveredByStations(List<String> stations) {
         Map<String, Map<String, List<PersonInfoExtendsDto>>> addressesAndTheirResidentsCoveredByStation = new HashMap<>();
         for (String station : stations) {
-            Map<String, List<PersonInfoExtendsDto>> personsByAddress= new HashMap<>();
+            Map<String, List<PersonInfoExtendsDto>> personsByAddress = new HashMap<>();
             List<String> addressesCoveredByStation = datas.getFireStations()
                     .stream()
                     .filter(stationItem -> stationItem.getStation().equals(station))
                     .map(FireStation::getAddress)
                     .toList();
 
-            for(String address: addressesCoveredByStation) {
+            for (String address : addressesCoveredByStation) {
                 personsByAddress.put(address, getPersonsInfoExtendsByAddress(address));
             }
-           addressesAndTheirResidentsCoveredByStation.put(station, personsByAddress);
+            addressesAndTheirResidentsCoveredByStation.put(station, personsByAddress);
         }
         return addressesAndTheirResidentsCoveredByStation;
     }
