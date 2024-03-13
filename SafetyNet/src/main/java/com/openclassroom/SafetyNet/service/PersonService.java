@@ -5,6 +5,7 @@ import com.openclassroom.SafetyNet.dto.PersonInfoExtendsMailDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.PersonRepository;
+import com.openclassroom.SafetyNet.utils.errors.InvalidNumberOfMatches;
 import com.openclassroom.SafetyNet.utils.errors.NotFoundException;
 import com.openclassroom.SafetyNet.utils.helper.AgeHelper;
 import com.openclassroom.SafetyNet.utils.helper.PatternHelper;
@@ -52,7 +53,7 @@ public class PersonService {
         personRepository.savePerson(newPerson);
     }
 
-    public void updatePerson(Person updatedPerson) throws InvalidAttributeValueException {
+    public void updatePerson(Person updatedPerson) throws InvalidNumberOfMatches, InvalidAttributeValueException {
         patternHelper.checkIsValidPerson(updatedPerson);
         // Find the index of the person to be updated
         var indexList = IntStream.range(0, datas.getPersons().size())
@@ -64,11 +65,11 @@ public class PersonService {
             personRepository.updatePerson(indexList.getFirst(), updatedPerson);
         } else {
             logger.error("Invalid number of matches in the list for this person");
-            throw new InvalidAttributeValueException(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), updatedPerson.getFirstName(), updatedPerson.getLastName()));
+            throw new InvalidNumberOfMatches(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), updatedPerson.getFirstName(), updatedPerson.getLastName()));
         }
     }
 
-    public void deletePerson(String firstName, String lastName) throws InvalidAttributeValueException {
+    public void deletePerson(String firstName, String lastName) throws InvalidNumberOfMatches {
         // Find the index of the person to be deleted
         var indexList = IntStream.range(0, datas.getPersons().size())
                 .filter(i -> datas.getPersons().get(i).getFirstName().equals(firstName) && datas.getPersons().get(i).getLastName().equals(lastName))
@@ -79,7 +80,7 @@ public class PersonService {
             personRepository.deletePerson(indexList.getFirst());
         } else {
             logger.error("Invalid number of matches in the list for this person");
-            throw new InvalidAttributeValueException(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), firstName, lastName));
+            throw new InvalidNumberOfMatches(MessageFormat.format("Their is {0} matches for {1} {2}", indexList.size(), firstName, lastName));
         }
     }
 

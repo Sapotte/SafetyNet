@@ -35,10 +35,11 @@ public class FireStationController {
         try{
             fireStationService.updateFireStation(address, station);
             logger.info(MessageFormat.format("The fireStation at the address \"{0}\" has been successfully updated", address));
+            return new ResponseEntity<>("Firestation updated", HttpStatusCode.valueOf(200));
         } catch (Exception e) {
+            logger.error("Error updating the firestation" + e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(404));
         }
-        return new ResponseEntity<>("Firestation updated", HttpStatusCode.valueOf(200));
     }
     @Operation(summary = "Delete firestation")
     @DeleteMapping

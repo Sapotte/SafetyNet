@@ -6,6 +6,7 @@ import com.openclassroom.SafetyNet.dto.PersonInfoExtendsMailDto;
 import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Person;
 import com.openclassroom.SafetyNet.repositories.models.PersonRepository;
+import com.openclassroom.SafetyNet.utils.errors.InvalidNumberOfMatches;
 import com.openclassroom.SafetyNet.utils.errors.NotFoundException;
 import com.openclassroom.SafetyNet.utils.helper.PatternHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +64,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    void updatePersonOk() throws InvalidAttributeValueException {
+    void updatePersonOk() throws InvalidAttributeValueException, InvalidNumberOfMatches {
         doNothing().when(patternHelper).checkIsValidPerson(any());
 
         // Get an already existing person and set the new person with first and last names
@@ -79,11 +80,11 @@ public class PersonServiceTest {
     void updateDuplicateKo() {
         // Duplicate a person in the list
         datas.getPersons().add(datas.getPersons().getFirst());
-        assertThrows(InvalidAttributeValueException.class, () -> personService.updatePerson(datas.getPersons().get(0)));
+        assertThrows(InvalidNumberOfMatches.class, () -> personService.updatePerson(datas.getPersons().get(0)));
         verify(personRepository, times(0)).updatePerson(anyInt(), any(Person.class));
     }
     @Test
-    void deletePersonOk() throws InvalidAttributeValueException {
+    void deletePersonOk() throws InvalidNumberOfMatches {
         Person personToDelete = datas.getPersons().getFirst();
         personService.deletePerson(personToDelete.getFirstName(), personToDelete.getLastName());
 
@@ -93,7 +94,7 @@ public class PersonServiceTest {
     void deleteDuplicateKo() {
         // Duplicate a person in the list
         datas.getPersons().add(datas.getPersons().getFirst());
-        assertThrows(InvalidAttributeValueException.class, () -> personService.deletePerson(datas.getPersons().get(0).getFirstName(), datas.getPersons().get(0).getFirstName()));
+        assertThrows(InvalidNumberOfMatches.class, () -> personService.deletePerson(datas.getPersons().get(0).getFirstName(), datas.getPersons().get(0).getFirstName()));
         verify(personRepository, times(0)).deletePerson(anyInt());
     }
 
