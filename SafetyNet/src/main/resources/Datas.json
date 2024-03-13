@@ -12,9 +12,6 @@
     "address" : "644 Gershwin Cir",
     "station" : "1"
   }, {
-    "address" : "748 Townings Dr",
-    "station" : "3"
-  }, {
     "address" : "112 Steppes Pl",
     "station" : "3"
   }, {
@@ -232,14 +229,6 @@
     "lastName" : "Cadigan",
     "phone" : "841-874-7458",
     "zip" : "97451"
-  }, {
-    "address" : null,
-    "city" : null,
-    "email" : null,
-    "firstName" : null,
-    "lastName" : null,
-    "phone" : null,
-    "zip" : null
   }, {
     "address" : "string",
     "city" : "string",

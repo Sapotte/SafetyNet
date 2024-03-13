@@ -34,11 +34,11 @@ public class AlertControllerTest {
     @Test
     void getChildsInfoByAddressOk() {
         List<ChildInfoDto> mockResult = List.of(new ChildInfoDto());
-        when(personService.getChildsByAddress(FIRESTATION_ADDRESS)).thenReturn(mockResult);
+        when(personService.getChildsByAddress(ADDRESS)).thenReturn(mockResult);
 
-        ResponseEntity<List<ChildInfoDto>> response = alertsController.getChildsInfosByAddress(FIRESTATION_ADDRESS);
+        ResponseEntity<List<ChildInfoDto>> response = alertsController.getChildsInfosByAddress(ADDRESS);
 
-        verify(personService, times(1)).getChildsByAddress(FIRESTATION_ADDRESS);
+        verify(personService, times(1)).getChildsByAddress(ADDRESS);
         assertEquals(mockResult, response.getBody());
     }
     @Test
@@ -54,11 +54,11 @@ public class AlertControllerTest {
     @Test
     void getPersonsByAddressOk() {
         PersonsByAddressDto mockResult = new PersonsByAddressDto();
-        when(fireStationService.getPersonsByAddress(FIRESTATION_ADDRESS)).thenReturn(mockResult);
+        when(fireStationService.getPersonsByAddress(ADDRESS)).thenReturn(mockResult);
 
-        ResponseEntity<PersonsByAddressDto> response = alertsController.getPersonsByAddress(FIRESTATION_ADDRESS);
+        ResponseEntity<PersonsByAddressDto> response = alertsController.getPersonsByAddress(ADDRESS);
 
-        verify(fireStationService, times(1)).getPersonsByAddress(FIRESTATION_ADDRESS);
+        verify(fireStationService, times(1)).getPersonsByAddress(ADDRESS);
         assertEquals(mockResult, response.getBody());
     }
 

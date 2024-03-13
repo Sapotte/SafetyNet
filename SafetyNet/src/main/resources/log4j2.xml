@@ -1,37 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="ALL">
+<Configuration>
     <Properties>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
         <Property name="APP_LOG_ROOT">c:/temp/logs</Property>
     </Properties>
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT" follow="true">
-            <PatternLayout pattern="%d [%t] %-5p %c{1} - %m%n" />
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
-        <File name="fileLogger"
-                     fileName="logs\app.log"
-                     filePattern="logs/app-%d{yyyy-MM-dd}.log">
+        <File name="LogFile"
+                     fileName="logs\app.log">
             <PatternLayout>
                 <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
                 </pattern>
             </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
-                <SizeBasedTriggeringPolicy size="10MB" />
-            </Policies>
-            <!-- Max 10 files will be created everyday -->
-            <DefaultRolloverStrategy max="10">
-                <Delete basePath="logs" maxDepth="10">
-                    <!-- Delete all files older than 30 days -->
-                    <IfLastModified age="30d" />
-                </Delete>
-            </DefaultRolloverStrategy>
         </File>
     </Appenders>
     <Loggers>
-        <Root level="debug">
+        <Root level="all">
             <AppenderRef ref="Console" />
-            <AppenderRef ref="fileLogger" />
+            <AppenderRef ref="LogFile" />
         </Root>
     </Loggers>
 </Configuration>

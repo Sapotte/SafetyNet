@@ -5,6 +5,7 @@ import com.openclassroom.SafetyNet.model.Datas;
 import com.openclassroom.SafetyNet.model.Medicalrecord;
 import com.openclassroom.SafetyNet.repositories.models.MedicalRecordRepository;
 import com.openclassroom.SafetyNet.utils.errors.InvalidNumberOfMatches;
+import com.openclassroom.SafetyNet.utils.errors.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static com.openclassroom.SafetyNet.utils.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -85,8 +87,17 @@ public class MedicalrecordServiceTest {
         verify(medicalRecordRepository, times(0)).deleteMedicalRecord(anyInt());
     }
     @Test
-    void getMedicalrecordsByNameOk() {
-        assertThrows(InvalidNumberOfMatches.class, () -> medicalRecordService.deleteMedicalRecord(medicalrecord.getFirstName(), medicalrecord.getLastName()));
-        verify(medicalRecordRepository, times(0)).deleteMedicalRecord(anyInt());
+    void getMedicalrecordsByNameOk() throws NotFoundException {
+        var response = medicalRecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME);
+
+        assertEquals(1, response.size());
+        assertEquals(MEDICATIONS, response.getFirst().getMedications());
+        assertEquals(ALLERGIES, response.getFirst().getAllergies());
+        assertEquals(BIRTHDATE, response.getFirst().getBirthdate());
+    }
+
+    @Test
+    void getMedicalrecordsByNameNotFoundKo() throws NotFoundException {
+        assertThrows(NotFoundException.class, () -> medicalRecordService.getMedicalrecordsByName(WRONG_FIRST_NAME, WRONG_LAST_NAME));
     }
 }

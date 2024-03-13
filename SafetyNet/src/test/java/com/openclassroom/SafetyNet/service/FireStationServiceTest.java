@@ -38,7 +38,6 @@ class FireStationServiceTest {
     PersonService personService;
     @Mock
     MedicalrecordService medicalrecordService;
-
     @Mock
     Datas datas;
 
@@ -58,7 +57,7 @@ class FireStationServiceTest {
     }
     @Test
     void addFireStationOk() {
-        fireStationService.addFireStation(FIRESTATION_ADDRESS, FIRESTATION_ID);
+        fireStationService.addFireStation(ADDRESS, FIRESTATION_ID);
 
         verify(fireStationRepository, times(1)).saveFirestation(any(FireStation.class));
     }
@@ -66,20 +65,20 @@ class FireStationServiceTest {
     @Test
     void updateFireStationOk() throws NotFoundException {
 
-        fireStationService.updateFireStation(FIRESTATION_ADDRESS, FIRESTATION_ID);
+        fireStationService.updateFireStation(ADDRESS, FIRESTATION_ID);
 
         verify(fireStationRepository, times(1)).updateFirestation(0, FIRESTATION_ID);
     }
 
     @Test
     void updateFireStationByWrongAddressKo() {
-        assertThrows(NotFoundException.class, () -> fireStationService.updateFireStation(FIRESTATION_WRONG_ADDRESS, FIRESTATION_ID));
+        assertThrows(NotFoundException.class, () -> fireStationService.updateFireStation(WRONG_ADDRESS, FIRESTATION_ID));
     }
 
     @Test
     void deleteFireStationByAddressOk() throws ClassNotFoundException {
 
-        fireStationService.deleteFirestationByAddress(FIRESTATION_ADDRESS);
+        fireStationService.deleteFirestationByAddress(ADDRESS);
 
         verify(fireStationRepository, times(1)).deleteFirestation(anyInt());
     }
@@ -87,7 +86,7 @@ class FireStationServiceTest {
     @Test
     void deleteFireStationByWrongAddressKo() {
 
-        assertThrows(ClassNotFoundException.class, () -> fireStationService.deleteFirestationByAddress(FIRESTATION_WRONG_ADDRESS));
+        assertThrows(ClassNotFoundException.class, () -> fireStationService.deleteFirestationByAddress(WRONG_ADDRESS));
         verify(fireStationRepository, times(0)).deleteFirestation(anyInt());
     }
 
@@ -103,7 +102,7 @@ class FireStationServiceTest {
         assertEquals(2, result.getPersonsBasicInfosDtoList().size());
         assertEquals(FIRST_NAME, result.getPersonsBasicInfosDtoList().getFirst().getFirstName());
         assertEquals(LAST_NAME, result.getPersonsBasicInfosDtoList().getFirst().getLastName());
-        assertEquals(FIRESTATION_ADDRESS, result.getPersonsBasicInfosDtoList().getFirst().getAddress());
+        assertEquals(ADDRESS, result.getPersonsBasicInfosDtoList().getFirst().getAddress());
         assertEquals(PHONE_NUMBER, result.getPersonsBasicInfosDtoList().getFirst().getPhoneNumber());
     }
 
@@ -127,12 +126,27 @@ class FireStationServiceTest {
         when(personService.getPersonsByAddresses(anyList())).thenReturn(personsAtAddress);
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(medicalrecordList1);
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(medicalrecordList2);
-        PersonsByAddressDto result = fireStationService.getPersonsByAddress(FIRESTATION_ADDRESS);
+        PersonsByAddressDto result = fireStationService.getPersonsByAddress(ADDRESS);
 
         assertEquals(FIRESTATION_ID, result.getStation());
         assertEquals(FIRST_NAME, result.getPersonInfoExtendsDtoList().getFirst().getFirstName());
         assertEquals(MEDICATIONS, result.getPersonInfoExtendsDtoList().getFirst().getMedications()) ;
-        assertEquals(List.of(), result.getPersonInfoExtendsDtoList().getFirst().getAllergies());
+        assertEquals(ALLERGIES, result.getPersonInfoExtendsDtoList().getFirst().getAllergies());
+    }
+
+    @Test
+    void getPersonsByAddressNoMedicalRecordFound() throws NotFoundException{
+        personsAtAddress.get(1).setFirstName(WRONG_FIRST_NAME);
+        personsAtAddress.get(1).setLastName(WRONG_LAST_NAME);
+        when(personService.getPersonsByAddresses(anyList())).thenReturn(personsAtAddress);
+        when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(medicalrecordList1);
+        doThrow(NotFoundException.class).when(medicalrecordService).getMedicalrecordsByName(WRONG_FIRST_NAME, WRONG_LAST_NAME);
+
+        PersonsByAddressDto result = fireStationService.getPersonsByAddress(ADDRESS);
+
+        assertNull(result.getPersonInfoExtendsDtoList().get(1).getMedications());
+        assertNull(result.getPersonInfoExtendsDtoList().get(1).getAllergies());
+        assertNull(result.getPersonInfoExtendsDtoList().get(1).getAge());
     }
 
     @Test
@@ -143,10 +157,10 @@ class FireStationServiceTest {
 
         Map<String, Map<String, List<PersonInfoExtendsDto>>> result = fireStationService.getAddressesAndTheirResidentsCoveredByStations(List.of(FIRESTATION_ID));
 
-        assertTrue(result.get(FIRESTATION_ID).containsKey(FIRESTATION_ADDRESS));
-        assertEquals(FIRST_NAME, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getFirstName());
-        assertEquals(LAST_NAME, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getLastName());
-        assertEquals(MEDICATIONS, result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getMedications()) ;
-        assertEquals(List.of(), result.get(FIRESTATION_ID).get(FIRESTATION_ADDRESS).getFirst().getAllergies());
+        assertTrue(result.get(FIRESTATION_ID).containsKey(ADDRESS));
+        assertEquals(FIRST_NAME, result.get(FIRESTATION_ID).get(ADDRESS).getFirst().getFirstName());
+        assertEquals(LAST_NAME, result.get(FIRESTATION_ID).get(ADDRESS).getFirst().getLastName());
+        assertEquals(MEDICATIONS, result.get(FIRESTATION_ID).get(ADDRESS).getFirst().getMedications()) ;
+        assertEquals(ALLERGIES, result.get(FIRESTATION_ID).get(ADDRESS).getFirst().getAllergies());
     }
 }

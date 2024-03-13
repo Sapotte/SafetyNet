@@ -2,6 +2,7 @@ package com.openclassroom.SafetyNet.controller;
 
 import com.openclassroom.SafetyNet.dto.PersonsCoveredByFirestationDto;
 import com.openclassroom.SafetyNet.service.FireStationService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ public class FireStationController {
     @Autowired
     private FireStationService fireStationService;
 
+    @Operation(summary = "Adding new firestation")
     @PostMapping
     public ResponseEntity<String> addFireStation(@RequestParam String address, @RequestParam String station) {
         String fireStationNumber = fireStationService.addFireStation(address, station);
@@ -27,6 +29,7 @@ public class FireStationController {
         return new ResponseEntity<>("Firestation created", HttpStatusCode.valueOf(201));
     }
 
+    @Operation(summary = "Update firestation")
     @PutMapping
     public ResponseEntity<String> updateFireStationNumber(@RequestParam String address, @RequestParam String station) {
         try{
@@ -37,11 +40,18 @@ public class FireStationController {
         }
         return new ResponseEntity<>("Firestation updated", HttpStatusCode.valueOf(200));
     }
-
+    @Operation(summary = "Delete firestation")
     @DeleteMapping
-    public void deleteFireStation(@RequestParam String address) throws Exception {
-        fireStationService.deleteFirestationByAddress(address);
-        logger.info(MessageFormat.format("The station with the address \"{0}\" has been successfully deleted", address));
+    public ResponseEntity<String> deleteFireStation(@RequestParam String address) throws Exception {
+        try{
+            fireStationService.deleteFirestationByAddress(address);
+            logger.info(MessageFormat.format("The station with the address \"{0}\" has been successfully deleted", address));
+            return new ResponseEntity<>("Deleted", HttpStatusCode.valueOf(200));
+        } catch (Exception e) {
+            logger.error("Error deleting firestation: "+ e.getMessage());
+            return new ResponseEntity<>("Error deleting firestation: "+ e.getMessage(), HttpStatusCode.valueOf(500));
+        }
+
     }
 
     @GetMapping

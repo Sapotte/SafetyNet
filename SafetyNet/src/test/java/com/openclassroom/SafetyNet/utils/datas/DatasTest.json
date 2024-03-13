@@ -57,7 +57,8 @@
   "medicalrecords":[
     {
       "allergies":[
-
+        "newAllergy1",
+        "newAllergy2"
       ],
       "birthdate":"03/06/2020",
       "firstName":"Jane",

@@ -99,7 +99,7 @@ public class PersonServiceTest {
 
     @Test
     void getPersonByAddressOk() {
-        var result = personService.getPersonsByAddresses(List.of(FIRESTATION_ADDRESS));
+        var result = personService.getPersonsByAddresses(List.of(ADDRESS));
 
         assertEquals(result, List.of(datas.getPersons().getFirst(), datas.getPersons().get(1)));
     }
@@ -113,7 +113,7 @@ public class PersonServiceTest {
     void getChildsByAddressOk() throws NotFoundException {
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME, LAST_NAME)).thenReturn(List.of(datas.getMedicalRecords().getFirst()));
         when(medicalrecordService.getMedicalrecordsByName(FIRST_NAME_2, LAST_NAME)).thenReturn(List.of(datas.getMedicalRecords().get(1)));
-        List<ChildInfoDto> result = personService.getChildsByAddress(FIRESTATION_ADDRESS);
+        List<ChildInfoDto> result = personService.getChildsByAddress(ADDRESS);
 
         assertEquals(1, result.size());
         assertEquals(1, result.getFirst().getFamilyMembers().size());
@@ -127,7 +127,7 @@ public class PersonServiceTest {
         assertEquals(1, result.size());
         assertEquals(result.getFirst().getEmail(), MAIL_ADDRESS);
         assertEquals(result.getFirst().getMedications(), MEDICATIONS);
-        assertEquals(result.getFirst().getAllergies(), List.of());
+        assertEquals(result.getFirst().getAllergies(), ALLERGIES);
     }
 
     @Test

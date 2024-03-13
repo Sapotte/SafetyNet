@@ -28,23 +28,23 @@ class FireStationControllerTest {
     void saveFirestationOk() {
         when(fireStationService.addFireStation(anyString(), anyString())).thenReturn(FIRESTATION_ID);
 
-        fireStationController.addFireStation(FIRESTATION_ADDRESS, FIRESTATION_ID);
+        fireStationController.addFireStation(ADDRESS, FIRESTATION_ID);
 
-        verify(fireStationService, times(1)).addFireStation(FIRESTATION_ADDRESS, FIRESTATION_ID);
+        verify(fireStationService, times(1)).addFireStation(ADDRESS, FIRESTATION_ID);
     }
 
     @Test
     void updateFirestationOk() throws NotFoundException {
-        fireStationController.updateFireStationNumber(FIRESTATION_ADDRESS, FIRESTATION_ID);
+        fireStationController.updateFireStationNumber(ADDRESS, FIRESTATION_ID);
 
-        verify(fireStationService, times(1)).updateFireStation(FIRESTATION_ADDRESS, FIRESTATION_ID);
+        verify(fireStationService, times(1)).updateFireStation(ADDRESS, FIRESTATION_ID);
     }
 
     @Test
     void updateFirestationNotFoundKo() throws NotFoundException {
         doThrow(NotFoundException.class).when(fireStationService).updateFireStation(anyString(), anyString());
 
-        var response  = fireStationController.updateFireStationNumber(FIRESTATION_WRONG_ADDRESS, FIRESTATION_ID);
+        var response  = fireStationController.updateFireStationNumber(WRONG_ADDRESS, FIRESTATION_ID);
 
         assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(404));
     }
@@ -52,9 +52,9 @@ class FireStationControllerTest {
     @Test
     void deleteFirestationOk() throws Exception {
 
-        fireStationController.deleteFireStation(FIRESTATION_ADDRESS);
+        fireStationController.deleteFireStation(ADDRESS);
 
-        verify(fireStationService, times(1)).deleteFirestationByAddress(FIRESTATION_ADDRESS);
+        verify(fireStationService, times(1)).deleteFirestationByAddress(ADDRESS);
     }
 
     @Test
