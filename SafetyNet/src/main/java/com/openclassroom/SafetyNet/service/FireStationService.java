@@ -113,7 +113,12 @@ public class FireStationService {
     public PersonsByAddressDto getPersonsByAddress(String address) {
         PersonsByAddressDto personsByAddressDto = new PersonsByAddressDto();
         List<PersonInfoExtendsDto> extendsInfoResidents = getPersonsInfoExtendsByAddress(address);
-        personsByAddressDto.setStation(datas.getFireStations().stream().filter(station -> address.equals(station.getAddress())).findAny().get().getStation());
+        var station = datas.getFireStations().stream().filter(stationNumber -> address.equals(stationNumber.getAddress())).findAny();
+        if (station.isPresent()) {
+            personsByAddressDto.setStation(station.get().getStation());
+        } else {
+            logger.error(MessageFormat.format("No station recorded for the address {0}", address));
+        }
         personsByAddressDto.setPersonInfoExtendsDtoList(extendsInfoResidents);
 
         return personsByAddressDto;
