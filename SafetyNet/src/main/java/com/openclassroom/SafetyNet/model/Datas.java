@@ -57,6 +57,7 @@ public class Datas {
         setFireStations(datas.getFireStations());
         setMedicalRecords(datas.getMedicalRecords());
         setPersons(datas.getPersons());
+        LOGGER.info("Datas deserialized");
     }
 
     @Bean
@@ -73,7 +74,5 @@ public class Datas {
             }
         }));
     }
-
-
 
 }

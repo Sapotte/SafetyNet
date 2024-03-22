@@ -54,7 +54,7 @@ public class PersonControllerTest {
         var response = personController.updatePerson(newPerson);
 
         verify(personService, times(1)).updatePerson(newPerson);
-        assertEquals(HttpStatusCode.valueOf(201), response.getStatusCode());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
     }
     @Test
     void updatePersonKo() throws InvalidAttributeValueException, InvalidNumberOfMatches {
@@ -71,7 +71,7 @@ public class PersonControllerTest {
     }
     @Test
     void deletePersonKo() throws InvalidNumberOfMatches {
-        doThrow(InvalidAttributeValueException.class).when(personService).deletePerson(anyString(), anyString());
+        doThrow(InvalidNumberOfMatches.class).when(personService).deletePerson(anyString(), anyString());
         var response = personController.deletePerson(FIRST_NAME, LAST_NAME);
         assertEquals(HttpStatusCode.valueOf(500), response.getStatusCode());
     }
